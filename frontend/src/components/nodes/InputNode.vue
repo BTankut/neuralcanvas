@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Handle, Position, useNode } from '@vue-flow/core'
 import { ref, watch } from 'vue'
-import { PhTextT } from '@phosphor-icons/vue'
 
 const { node } = useNode()
 const inputValue = ref(node.data?.inputValue || '')
@@ -13,9 +12,13 @@ watch(inputValue, (val) => {
 </script>
 
 <template>
-  <div class="neural-node-base input-node group">
-    <div class="node-header bg-neon-blue/20 border-b border-neon-blue/30 text-neon-blue flex items-center">
-      <PhTextT weight="bold" class="text-lg mr-2" />
+  <div class="neural-node-base input-node group relative">
+    <!-- Glowing Icon Badge -->
+    <div class="absolute -top-6 -left-4 w-12 h-12 bg-slate-900 rounded-xl border border-neon-blue/50 shadow-[0_0_15px_rgba(59,130,246,0.5)] flex items-center justify-center z-20 transform group-hover:scale-110 transition-all duration-300">
+        <img src="/assets/icons/input-source.png" class="w-8 h-8 object-contain" alt="Input" />
+    </div>
+
+    <div class="node-header bg-neon-blue/20 border-b border-neon-blue/30 text-neon-blue flex items-center justify-center min-h-[40px]">
       <span class="font-bold text-xs tracking-wider uppercase">Input Source</span>
     </div>
     

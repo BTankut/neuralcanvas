@@ -2,7 +2,6 @@
 import { Handle, Position, useNodeId, useNode } from '@vue-flow/core'
 import { ref, computed, watch } from 'vue'
 import { useWorkflowStore } from '../../stores/workflow'
-import { PhBrain } from '@phosphor-icons/vue'
 
 const props = defineProps(['data'])
 const nodeId = useNodeId()
@@ -38,7 +37,7 @@ const selectedModelName = computed(() => {
 
 <template>
   <div 
-    class="neural-node-base llm-node w-64 relative transition-all duration-300"
+    class="neural-node-base llm-node w-64 relative transition-all duration-300 group"
     :class="{
         'ring-2 ring-neon-purple shadow-[0_0_30px_rgba(139,92,246,0.6)]': isRunning,
         'border-neon-green': status.status === 'success',
@@ -49,11 +48,15 @@ const selectedModelName = computed(() => {
     <!-- Status Pulse -->
     <div v-if="isRunning" class="absolute -inset-1 bg-neon-purple/20 blur-lg rounded-lg animate-pulse z-0"></div>
 
+    <!-- Glowing Icon Badge -->
+    <div class="absolute -top-6 -left-4 w-12 h-12 bg-slate-900 rounded-xl border border-neon-purple/50 shadow-[0_0_15px_rgba(139,92,246,0.5)] flex items-center justify-center z-20 transform group-hover:scale-110 transition-all duration-300">
+        <img src="/assets/icons/brain-chip.png" class="w-8 h-8 object-contain" alt="AI" />
+    </div>
+
     <div class="relative z-10 bg-slate-900/90 rounded-lg">
-        <div class="node-header bg-neon-purple/20 border-b border-neon-purple/30 text-neon-purple flex justify-between items-center"
+        <div class="node-header bg-neon-purple/20 border-b border-neon-purple/30 text-neon-purple flex justify-center items-center min-h-[40px]"
              :class="{'!bg-slate-800 !text-slate-500 !border-slate-700': status.status === 'skipped'}">
         <div class="flex items-center">
-            <PhBrain weight="bold" class="text-lg mr-2" />
             <span class="font-bold text-xs tracking-wider uppercase">AI Processing</span>
         </div>
         <div v-if="isRunning" class="w-2 h-2 bg-neon-purple rounded-full animate-ping"></div>
