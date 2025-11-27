@@ -3,7 +3,6 @@ import { ref, markRaw, watch } from 'vue'
 import { VueFlow, useVueFlow } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
 import { Controls } from '@vue-flow/controls'
-import { PhGearSix, PhSpinner } from '@phosphor-icons/vue'
 import { useWorkflowStore } from '../../stores/workflow'
 import InputNode from '../nodes/InputNode.vue'
 import LLMNode from '../nodes/LLMNode.vue'
@@ -15,6 +14,8 @@ import SettingsModal from '../ui/SettingsModal.vue'
 import ConnectionStatus from '../ui/ConnectionStatus.vue'
 import CostDisplay from '../ui/CostDisplay.vue'
 import ContextMenu from '../ui/ContextMenu.vue'
+import PersistenceModal from '../ui/PersistenceModal.vue'
+import { PhGearSix, PhSpinner, PhFloppyDisk, PhFolderOpen } from '@phosphor-icons/vue'
 
 import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
@@ -23,6 +24,7 @@ import '@vue-flow/controls/dist/style.css'
 const store = useWorkflowStore()
 const { onConnect, addEdges } = useVueFlow()
 const settingsModal = ref()
+const persistenceModal = ref()
 
 const nodeTypes = {
   'neural-input': markRaw(InputNode),
@@ -72,8 +74,22 @@ const edges = ref([
 ])
 
 // Sync with store
-watch(nodes, (newNodes) => store.setNodes(newNodes), { deep: true, immediate: true })
-watch(edges, (newEdges) => store.setEdges(newEdges), { deep: true, immediate: true })
+// Watch local changes -> update store
+watch(nodes, (newNodes) => store.setNodes(newNodes), { deep: true })
+watch(edges, (newEdges) => store.setEdges(newEdges), { deep: true })
+
+// Watch store changes (e.g. LOAD) -> update local
+watch(() => store.nodes, (newNodes) => {
+    if (JSON.stringify(newNodes) !== JSON.stringify(nodes.value)) {
+        nodes.value = [...newNodes] as any
+    }
+}, { deep: true })
+
+watch(() => store.edges, (newEdges) => {
+    if (JSON.stringify(newEdges) !== JSON.stringify(edges.value)) {
+        edges.value = [...newEdges] as any
+    }
+}, { deep: true })
 
 onConnect((params) => addEdges(params))
 
@@ -84,6 +100,23 @@ onConnect((params) => addEdges(params))
     
     <!-- Floating Action Button for Run -->
     <div class="absolute top-4 right-4 z-50 flex gap-3">
+        <div class="flex gap-1 mr-4 border-r border-slate-700 pr-4">
+            <button 
+                @click="persistenceModal.open('save')"
+                class="w-10 h-10 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-neon-blue transition-all backdrop-blur-md"
+                title="Save Workflow"
+            >
+                <PhFloppyDisk weight="bold" class="text-xl" />
+            </button>
+            <button 
+                @click="persistenceModal.open('load')"
+                class="w-10 h-10 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-neon-green transition-all backdrop-blur-md"
+                title="Load Workflow"
+            >
+                <PhFolderOpen weight="bold" class="text-xl" />
+            </button>
+        </div>
+
         <button 
             @click="settingsModal.open()"
             class="w-10 h-10 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-white transition-all backdrop-blur-md"
@@ -104,6 +137,7 @@ onConnect((params) => addEdges(params))
     </div>
 
     <SettingsModal ref="settingsModal" />
+    <PersistenceModal ref="persistenceModal" />
     <ConnectionStatus />
     <CostDisplay />
     

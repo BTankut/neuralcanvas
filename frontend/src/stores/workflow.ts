@@ -235,6 +235,46 @@ export const useWorkflowStore = defineStore('workflow', () => {
   setInterval(checkConnection, 5000)
   checkConnection() // Initial check
 
+  // Persistence
+  function saveWorkflow(name: string) {
+    const flow = {
+        id: crypto.randomUUID(),
+        name,
+        nodes: nodes.value,
+        edges: edges.value,
+        savedAt: new Date().toISOString()
+    }
+    
+    const saved = JSON.parse(localStorage.getItem('neural_workflows') || '[]')
+    saved.push(flow)
+    localStorage.setItem('neural_workflows', JSON.stringify(saved))
+    alert('Workflow saved successfully!')
+  }
+
+  function loadWorkflow(id: string) {
+    const saved = JSON.parse(localStorage.getItem('neural_workflows') || '[]')
+    const flow = saved.find((w: any) => w.id === id)
+    if (flow) {
+        // Deep copy to avoid reference issues
+        nodes.value = JSON.parse(JSON.stringify(flow.nodes))
+        edges.value = JSON.parse(JSON.stringify(flow.edges))
+        
+        // Reset execution state
+        nodeStatus.value = {}
+        isExecuting.value = false
+    }
+  }
+
+  function getSavedWorkflows() {
+    return JSON.parse(localStorage.getItem('neural_workflows') || '[]')
+  }
+
+  function deleteWorkflow(id: string) {
+      const saved = JSON.parse(localStorage.getItem('neural_workflows') || '[]')
+      const filtered = saved.filter((w: any) => w.id !== id)
+      localStorage.setItem('neural_workflows', JSON.stringify(filtered))
+  }
+
   return {
     nodes,
     edges,
@@ -250,6 +290,10 @@ export const useWorkflowStore = defineStore('workflow', () => {
     setEdges,
     runWorkflow,
     setApiKey,
-    fetchModels
+    fetchModels,
+    saveWorkflow,
+    loadWorkflow,
+    getSavedWorkflows,
+    deleteWorkflow
   }
 })
