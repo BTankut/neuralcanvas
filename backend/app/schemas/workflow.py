@@ -25,6 +25,8 @@ class Edge(BaseModel):
     id: str
     source: str
     target: str
+    sourceHandle: Optional[str] = None
+    targetHandle: Optional[str] = None
     animated: bool = False
 
 class WorkflowGraph(BaseModel):

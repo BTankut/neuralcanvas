@@ -3,7 +3,7 @@ import { ref, computed } from 'vue'
 import type { Node, Edge } from '@vue-flow/core'
 
 export interface NodeExecutionStatus {
-  status: 'idle' | 'running' | 'success' | 'error'
+  status: 'idle' | 'running' | 'success' | 'error' | 'skipped'
   result?: string
   stream?: string
   usage?: {
@@ -119,6 +119,8 @@ export const useWorkflowStore = defineStore('workflow', () => {
             id: e.id,
             source: e.source,
             target: e.target,
+            sourceHandle: e.sourceHandle || null,
+            targetHandle: e.targetHandle || null,
             animated: e.animated || false
         }))
 
@@ -159,6 +161,10 @@ export const useWorkflowStore = defineStore('workflow', () => {
                     result: msg.result,
                     stream: msg.result // Finalize stream with full result
                 }
+                break
+
+            case 'node_skipped':
+                nodeStatus.value[msg.node_id] = { status: 'skipped' }
                 break
 
             case 'node_usage':

@@ -42,19 +42,22 @@ const selectedModelName = computed(() => {
     :class="{
         'ring-2 ring-neon-purple shadow-[0_0_30px_rgba(139,92,246,0.6)]': isRunning,
         'border-neon-green': status.status === 'success',
-        'border-neon-red': status.status === 'error'
+        'border-neon-red': status.status === 'error',
+        'opacity-50 border-slate-700 grayscale': status.status === 'skipped'
     }"
   >
     <!-- Status Pulse -->
     <div v-if="isRunning" class="absolute -inset-1 bg-neon-purple/20 blur-lg rounded-lg animate-pulse z-0"></div>
 
     <div class="relative z-10 bg-slate-900/90 rounded-lg">
-        <div class="node-header bg-neon-purple/20 border-b border-neon-purple/30 text-neon-purple flex justify-between items-center">
+        <div class="node-header bg-neon-purple/20 border-b border-neon-purple/30 text-neon-purple flex justify-between items-center"
+             :class="{'!bg-slate-800 !text-slate-500 !border-slate-700': status.status === 'skipped'}">
         <div class="flex items-center">
             <PhBrain weight="bold" class="text-lg mr-2" />
             <span class="font-bold text-xs tracking-wider uppercase">AI Processing</span>
         </div>
         <div v-if="isRunning" class="w-2 h-2 bg-neon-purple rounded-full animate-ping"></div>
+        <span v-if="status.status === 'skipped'" class="text-[9px] font-bold">SKIPPED</span>
         </div>
         
         <div class="node-body p-3 space-y-3">
@@ -74,7 +77,7 @@ const selectedModelName = computed(() => {
                 </div>
                 
                 <!-- Scrollable Text -->
-                <div class="p-2 text-[10px] font-mono text-slate-300 overflow-y-auto custom-scrollbar flex-1">
+                <div class="p-2 text-[10px] font-mono text-slate-300 overflow-y-auto custom-scrollbar flex-1 nodrag cursor-text select-text">
                     {{ streamText }}<span v-if="isRunning" class="animate-pulse text-neon-purple">_</span>
                 </div>
             </div>

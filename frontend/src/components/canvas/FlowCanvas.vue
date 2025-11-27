@@ -8,9 +8,11 @@ import { useWorkflowStore } from '../../stores/workflow'
 import InputNode from '../nodes/InputNode.vue'
 import LLMNode from '../nodes/LLMNode.vue'
 import OutputNode from '../nodes/OutputNode.vue'
+import ConditionalNode from '../nodes/ConditionalNode.vue'
 import SettingsModal from '../ui/SettingsModal.vue'
 import ConnectionStatus from '../ui/ConnectionStatus.vue'
 import CostDisplay from '../ui/CostDisplay.vue'
+import ContextMenu from '../ui/ContextMenu.vue'
 
 import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
@@ -24,6 +26,7 @@ const nodeTypes = {
   'neural-input': markRaw(InputNode),
   'neural-llm': markRaw(LLMNode),
   'neural-output': markRaw(OutputNode),
+  'neural-condition': markRaw(ConditionalNode),
 }
 
 // Initial nodes
@@ -31,26 +34,33 @@ const nodes = ref([
   {
     id: '1',
     type: 'neural-input',
-    position: { x: 100, y: 100 },
-    data: { label: 'Start', inputValue: 'Explain quantum physics to a 5 year old.' }
+    position: { x: 50, y: 200 },
+    data: { label: 'Start', inputValue: 'Tell me a secret about cooking.' }
   },
   {
     id: '2',
-    type: 'neural-llm',
-    position: { x: 500, y: 50 },
-    data: { label: 'GPT-4' }
+    type: 'neural-condition',
+    position: { x: 400, y: 200 },
+    data: { label: 'Check Topic', node_config: { conditionType: 'contains', targetValue: 'physics' } }
   },
   {
     id: '3',
+    type: 'neural-llm',
+    position: { x: 800, y: 50 },
+    data: { label: 'Physics Expert' }
+  },
+  {
+    id: '4',
     type: 'neural-output',
-    position: { x: 900, y: 100 },
-    data: { label: 'Result' }
+    position: { x: 800, y: 350 },
+    data: { label: 'Other Topics' }
   },
 ])
 
 const edges = ref([
   { id: 'e1-2', source: '1', target: '2', animated: true },
-  { id: 'e2-3', source: '2', target: '3', animated: true },
+  { id: 'e2-3', source: '2', target: '3', sourceHandle: 'true', animated: true, style: { stroke: '#10b981' } },
+  { id: 'e2-4', source: '2', target: '4', sourceHandle: 'false', animated: true, style: { stroke: '#ef4444' } },
 ])
 
 // Sync with store
@@ -88,7 +98,7 @@ onConnect((params) => addEdges(params))
     <SettingsModal ref="settingsModal" />
     <ConnectionStatus />
     <CostDisplay />
-
+    
     <VueFlow
       v-model="nodes"
       v-model:edges="edges"
@@ -101,6 +111,7 @@ onConnect((params) => addEdges(params))
     >
       <Background pattern-color="#3b82f6" :gap="20" :size="1" class="opacity-10" />
       <Controls class="bg-slate-900 border border-slate-700 text-slate-200" />
+      <ContextMenu />
     </VueFlow>
   </div>
 </template>

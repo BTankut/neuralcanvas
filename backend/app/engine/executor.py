@@ -23,8 +23,6 @@ class WorkflowExecutor:
         await self.websocket.send_json({"type": "execution_start"})
         
         try:
-            # ... (rest of code) ...
-            # Replace prints with logger.info/error
             # 1. Build Adjacency List and In-Degree count
             adj_list: Dict[str, List[str]] = {node.id: [] for node in self.graph.nodes}
             in_degree: Dict[str, int] = {node.id: 0 for node in self.graph.nodes}
@@ -52,6 +50,15 @@ class WorkflowExecutor:
 
                 # Get inputs from parent nodes
                 inputs = self._gather_inputs(current_node_id)
+
+                # Skip if inputs is None (dead branch)
+                if inputs is None:
+                    # Emit skipped event here since we can await
+                    await self.websocket.send_json({
+                        "type": "node_skipped",
+                        "node_id": current_node_id
+                    })
+                    continue
 
                 # EXECUTE NODE
                 await self._execute_node(current_node, inputs)
@@ -81,15 +88,54 @@ class WorkflowExecutor:
         for edge in incoming_edges:
             source_id = edge.source
             if source_id in self.execution_results:
-                # In a real scenario, we might map specific handles
-                # For now, we just merge the 'output' of the parent
+                # Check branching
+                parent_node = self.node_map.get(source_id)
+                if parent_node and parent_node.type == 'neural-condition':
+                    parent_output = self.execution_results[source_id]
+                    
+                    # Handle the new complex output object
+                    parent_result = "false"
+                    parent_data = ""
+                    
+                    if isinstance(parent_output, dict) and "signal" in parent_output:
+                        parent_result = parent_output["signal"]
+                        parent_data = parent_output["data"]
+                    else:
+                        # Fallback for legacy or other nodes
+                        parent_result = str(parent_output)
+                        parent_data = str(parent_output)
+
+                    # Using getattr safely in case Pydantic model field is missing (though I added it)
+                    edge_handle = getattr(edge, 'sourceHandle', None)
+                    
+                    logger.info(f"DEBUG BRANCH: Edge {edge.id} Source: {source_id} -> Target: {node_id}. Handle: {edge_handle} vs Result: {parent_result}")
+
+                    # If edge has a specific handle, it MUST match the result
+                    if edge_handle and edge_handle != parent_result:
+                        logger.info(f"Skipping input from {source_id} to {node_id} because path {edge_handle} is not active (Result: {parent_result})")
+                        continue
+                        
+                    # If we pass the check, we pass the DATA
+                    inputs[source_id] = parent_data
+                    continue # Skip default assignment
+                
                 inputs[source_id] = self.execution_results[source_id]
+        
+        # CRITICAL FIX: If a node expects inputs (has incoming edges) but received NONE because they were filtered out,
+        # it means this branch is DEAD. We should NOT execute this node.
+        if incoming_edges and not inputs:
+             logger.info(f"Node {node_id} skipped because all incoming inputs were blocked by conditions.")
+             return None 
+
         return inputs
 
     async def _execute_node(self, node: Node, inputs: Dict[str, Any]):
         """
         Execute Node Logic.
         """
+        if inputs is None:
+            return # Skip execution transparently
+            
         # Notify UI: Node Started
         await self.websocket.send_json({
             "type": "node_start",
@@ -169,6 +215,28 @@ class WorkflowExecutor:
                      await self.websocket.send_json({"type": "node_error", "node_id": node.id, "error": f"LLM Fail: {str(e)}"})
                      raise e
 
+            elif node.type == 'neural-condition':
+                # CONDITIONAL LOGIC
+                condition_type = node.data.node_config.get("conditionType", "contains")
+                target_value = node.data.node_config.get("targetValue", "")
+                
+                # Aggregate all input text
+                input_text = "\n".join([str(val) for val in inputs.values()])
+                
+                is_match = False
+                if condition_type == "contains":
+                    is_match = target_value.lower() in input_text.lower()
+                elif condition_type == "equals":
+                    is_match = input_text.strip().lower() == target_value.strip().lower()
+                elif condition_type == "not_contains":
+                    is_match = target_value.lower() not in input_text.lower()
+                
+                result = {
+                    "signal": "true" if is_match else "false",
+                    "data": input_text
+                }
+                await asyncio.sleep(0.1)
+
             elif node.type == 'neural-output':
                 # Output node aggregates inputs
                 result = "\n".join([str(val) for val in inputs.values()])
@@ -177,11 +245,17 @@ class WorkflowExecutor:
             # Store result
             self.execution_results[node.id] = result
 
+            # For the Frontend UI, we want to show the "Signal" (true/false) on the Condition Node,
+            # but the actual text content on other nodes.
+            ui_result = result
+            if isinstance(result, dict) and "signal" in result:
+                ui_result = result["signal"]
+
             # Notify UI: Node Finished
             await self.websocket.send_json({
                 "type": "node_finish",
                 "node_id": node.id,
-                "result": result
+                "result": ui_result
             })
 
         except Exception as e:

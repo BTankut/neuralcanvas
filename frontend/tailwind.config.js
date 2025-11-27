@@ -17,6 +17,7 @@ export default {
           purple: '#8b5cf6',
           green: '#10b981',
           red: '#ef4444',
+          yellow: '#eab308',
         },
         slate: {
           900: '#0f172a',

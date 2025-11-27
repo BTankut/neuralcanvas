@@ -16,18 +16,22 @@ const result = computed(() => status.value.result)
   <div 
     class="neural-node-base output-node w-64 transition-all duration-300"
     :class="{
-        'border-neon-green shadow-[0_0_20px_rgba(16,185,129,0.4)]': status.status === 'success'
+        'border-neon-green shadow-[0_0_20px_rgba(16,185,129,0.4)]': status.status === 'success',
+        'opacity-50 border-slate-700 grayscale': status.status === 'skipped'
     }"
   >
-    <div class="node-header bg-neon-green/20 border-b border-neon-green/30 text-neon-green flex justify-between items-center">
+    <div class="node-header bg-neon-green/20 border-b border-neon-green/30 text-neon-green flex justify-between items-center"
+         :class="{'!bg-slate-800 !text-slate-500 !border-slate-700': status.status === 'skipped'}">
         <div class="flex items-center">
             <PhTerminalWindow weight="bold" class="text-lg mr-2" />
             <span class="font-bold text-xs tracking-wider uppercase">Result Output</span>
         </div>
+        <span v-if="status.status === 'skipped'" class="text-[9px] font-bold">SKIPPED</span>
     </div>
     
-    <div class="node-body p-3 min-h-[80px] bg-black/30 flex items-start justify-start overflow-auto max-h-60 custom-scrollbar">
+    <div class="node-body p-3 min-h-[80px] bg-black/30 flex items-start justify-start overflow-auto max-h-60 custom-scrollbar nodrag cursor-text select-text">
       <div v-if="result" class="text-xs font-mono text-slate-300 whitespace-pre-wrap">{{ result }}</div>
+      <span v-else-if="status.status === 'skipped'" class="text-xs text-slate-600 italic m-auto">Node execution skipped</span>
       <span v-else class="text-xs text-slate-500 italic m-auto">Waiting for execution...</span>
     </div>
 
