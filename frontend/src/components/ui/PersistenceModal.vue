@@ -10,28 +10,68 @@ const loadTab = ref<'saved' | 'templates'>('saved') // Sub-tab for load mode
 const saveName = ref('')
 const savedWorkflows = ref<any[]>([])
 
-// Hardcoded template registry (since we can't fs.readdir in browser easily without build steps)
+// Hardcoded template registry with embedded data
 const builtInTemplates = [
     {
         id: 'template-journalist',
         name: 'The Tech Journalist',
         description: 'Searches web for news and writes an article.',
-        file: '/templates/journalist.json',
-        icon: 'PhNewspaper'
+        icon: 'PhNewspaper',
+        data: {
+            nodes: [
+                { id: "1", type: "neural-input", position: { x: 50, y: 250 }, data: { label: "Topic", inputValue: "Recent breakthroughs in Quantum Computing 2024" } },
+                { id: "2", type: "neural-search", position: { x: 400, y: 250 }, data: { label: "Web Research", node_config: { searchQuery: "" } } },
+                { id: "3", type: "neural-llm", position: { x: 750, y: 250 }, data: { label: "Article Writer", node_config: { model: "openai/gpt-3.5-turbo", temperature: 0.7, systemPrompt: "You are a senior technology editor for Wired. Write a captivating, detailed news report based on the following search results. Use markdown formatting, headings, and a professional tone. Focus on the implications for the future." } } },
+                { id: "4", type: "neural-output", position: { x: 1100, y: 250 }, data: { label: "Final Article" } }
+            ],
+            edges: [
+                { id: "e1-2", source: "1", target: "2", animated: true },
+                { id: "e2-3", source: "2", target: "3", animated: true },
+                { id: "e3-4", source: "3", "target": "4", "animated": true }
+            ]
+        }
     },
     {
         id: 'template-refiner',
         name: 'The Idea Refiner',
         description: 'Iteratively improves an idea 3 times using a loop.',
-        file: '/templates/refiner.json',
-        icon: 'PhLightbulb'
+        icon: 'PhLightbulb',
+        data: {
+            nodes: [
+                { id: "1", type: "neural-input", position: { x: 50, y: 200 }, data: { label: "Raw Idea", inputValue: "A mobile app that connects local farmers directly to consumers." } },
+                { id: "2", type: "neural-loop", position: { x: 400, y: 200 }, data: { label: "Iterator", node_config: { max_iterations: 3 } } },
+                { id: "3", type: "neural-llm", position: { x: 800, y: 50 }, data: { label: "Refiner AI", node_config: { model: "openai/gpt-3.5-turbo", temperature: 0.9, systemPrompt: "You are a world-class Product Strategist. Analyze the current iteration of the product concept. Critically evaluate its feasibility and add one 'Killer Feature' that would make it a unicorn startup. Be specific and bold." } } },
+                { id: "4", type: "neural-output", position: { x: 800, y: 400 }, data: { label: "Polished Concept" } }
+            ],
+            edges: [
+                { id: "e1-2", source: "1", target: "2", animated: true },
+                { id: "e2-3", source: "2", target: "3", sourceHandle: "loop", animated: true, style: { stroke: "#06b6d4" } },
+                { id: "e3-2", source: "3", target: "2", animated: true, style: { stroke: "#06b6d4", strokeDasharray: "5,5" } },
+                { id: "e2-4", source: "2", "target": "4", "sourceHandle: "done", animated: true, style: { stroke: "#10b981" } }
+            ]
+        }
     },
     {
         id: 'template-router',
         name: 'The Support Router',
         description: 'Routes messages based on sentiment (Angry vs Happy).',
-        file: '/templates/router.json',
-        icon: 'PhGitFork'
+        icon: 'PhGitFork',
+        data: {
+            nodes: [
+                { id: "1", type: "neural-input", position: { x: 50, y: 250 }, data: { label: "Customer Message", inputValue: "I've been waiting for my package for 3 weeks and nobody is answering me! This is unacceptable service." } },
+                { id: "2", type: "neural-condition", position: { x: 400, y: 250 }, data: { label: "Sentiment Check", node_config: { conditionType: "contains", targetValue: "unacceptable" } } },
+                { id: "3", type: "neural-llm", position: { x: 800, y: 50 }, data: { label: "Apology Bot", node_config: { model: "openai/gpt-3.5-turbo", temperature: 0.5, systemPrompt: "You are a Senior Customer Success Manager. Write a deeply empathetic, professional apology email. Offer a concrete solution (like a refund or discount) and assure the customer that you are personally taking over their case." } } },
+                { id: "4", type: "neural-llm", position: { x: 800, y: 450 }, data: { label: "Support Bot", node_config: { model: "openai/gpt-3.5-turbo", temperature: 0.5, systemPrompt: "Write a standard, polite support acknowledgment email. Ask for the order number and provide typical shipping timelines." } } },
+                { id: "5", type: "neural-output", position: { x: 1200, "y": 250 }, data: { label: "Final Response" } }
+            ],
+            edges: [
+                { id: "e1-2", source: "1", target: "2", animated: true },
+                { id: "e2-3", source: "2", target: "3", sourceHandle: "true", animated: true, style: { stroke: "#10b981" } },
+                { id: "e2-4", source: "2", "target": "4", "sourceHandle: "false", animated: true, style: { stroke: "#ef4444" } },
+                { id: "e3-5", source: "3", target: "5", animated: true },
+                { id: "e4-5", source: "4", target: "5", animated: true }
+            ]
+        }
     }
 ]
 
@@ -63,23 +103,25 @@ function handleLoad(id: string) {
     }
 }
 
-async function handleLoadTemplate(template: any) {
+function handleLoadTemplate(template: any) {
     if (confirm(`Load template "${template.name}"? This will overwrite your canvas.`)) {
         try {
-            const res = await fetch(template.file)
-            if (!res.ok) throw new Error('Failed to load template file')
-            const flow = await res.json()
+            // Use embedded data directly
+            const flow = template.data
             
-            // Reset store with template data
-            store.setNodes(flow.nodes)
-            store.setEdges(flow.edges)
+            // Deep copy to avoid reference issues
+            const nodes = JSON.parse(JSON.stringify(flow.nodes))
+            const edges = JSON.parse(JSON.stringify(flow.edges))
+
+            store.setNodes(nodes)
+            store.setEdges(edges)
             store.nodeStatus = {}
             store.isExecuting = false
             
             isOpen.value = false
         } catch (e) {
             console.error(e)
-            alert('Error loading template.')
+            alert('Error loading template: ' + e)
         }
     }
 }
