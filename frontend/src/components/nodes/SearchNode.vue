@@ -11,7 +11,7 @@ const { node } = useNode()
 // Config State
 const searchQuery = ref(node.data?.node_config?.searchQuery || '')
 
-// Sync config
+// Sync config local -> node
 watch(searchQuery, (val) => {
     node.data = {
         ...node.data,
@@ -19,6 +19,13 @@ watch(searchQuery, (val) => {
             ...node.data?.node_config,
             searchQuery: val
         }
+    }
+})
+
+// Sync node -> local (Fix for loading templates)
+watch(() => node.data?.node_config?.searchQuery, (newVal) => {
+    if (newVal !== undefined && newVal !== searchQuery.value) {
+        searchQuery.value = newVal
     }
 })
 

@@ -12,7 +12,7 @@ const { node } = useNode()
 const conditionType = ref(node.data?.node_config?.conditionType || 'contains')
 const targetValue = ref(node.data?.node_config?.targetValue || '')
 
-// Sync config
+// Sync config local -> node
 watch([conditionType, targetValue], ([newType, newTarget]) => {
     node.data = {
         ...node.data,
@@ -22,6 +22,14 @@ watch([conditionType, targetValue], ([newType, newTarget]) => {
             targetValue: newTarget
         }
     }
+})
+
+// Sync node -> local (Fix for loading templates)
+watch(() => node.data?.node_config?.conditionType, (newVal) => {
+    if (newVal !== undefined && newVal !== conditionType.value) conditionType.value = newVal
+})
+watch(() => node.data?.node_config?.targetValue, (newVal) => {
+    if (newVal !== undefined && newVal !== targetValue.value) targetValue.value = newVal
 })
 
 // Execution State

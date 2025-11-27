@@ -11,7 +11,7 @@ const { node } = useNode()
 // Config State
 const maxIterations = ref(node.data?.node_config?.max_iterations || 3)
 
-// Sync config
+// Sync config local -> node
 watch(maxIterations, (val) => {
     node.data = {
         ...node.data,
@@ -19,6 +19,13 @@ watch(maxIterations, (val) => {
             ...node.data?.node_config,
             max_iterations: val
         }
+    }
+})
+
+// Sync node -> local (Fix for loading templates)
+watch(() => node.data?.node_config?.max_iterations, (newVal) => {
+    if (newVal !== undefined && newVal !== maxIterations.value) {
+        maxIterations.value = newVal
     }
 })
 

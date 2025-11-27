@@ -5,9 +5,16 @@ import { ref, watch } from 'vue'
 const { node } = useNode()
 const inputValue = ref(node.data?.inputValue || '')
 
-// Sync local input with node data for the store to pick up
+// Sync local input -> node data
 watch(inputValue, (val) => {
     node.data = { ...node.data, inputValue: val }
+})
+
+// Sync node data -> local input (Fix for loading templates)
+watch(() => node.data?.inputValue, (newVal) => {
+    if (newVal !== undefined && newVal !== inputValue.value) {
+        inputValue.value = newVal
+    }
 })
 </script>
 

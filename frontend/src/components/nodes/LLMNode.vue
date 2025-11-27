@@ -24,6 +24,14 @@ watch([model, temp], ([newModel, newTemp]) => {
     }
 })
 
+// Sync node data -> local state (Fix for loading templates)
+watch(() => node.data?.node_config?.model, (newVal) => {
+    if (newVal !== undefined && newVal !== model.value) model.value = newVal
+})
+watch(() => node.data?.node_config?.temperature, (newVal) => {
+    if (newVal !== undefined && newVal !== temp.value) temp.value = newVal
+})
+
 const status = computed(() => store.nodeStatus[nodeId] || { status: 'idle' } as any)
 const isRunning = computed(() => status.value.status === 'running')
 const streamText = computed(() => status.value.stream || '')
