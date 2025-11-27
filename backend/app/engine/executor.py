@@ -186,6 +186,40 @@ class WorkflowExecutor:
                 result = node.data.inputValue or "Empty Input"
                 await asyncio.sleep(0.1) 
 
+            elif node.type == 'neural-search':
+                # WEB SEARCH LOGIC
+                from duckduckgo_search import DDGS
+                
+                # Determine query: Config overrides Input
+                query = node.data.node_config.get("searchQuery", "")
+                if not query:
+                    # Use input text if config is empty
+                    query = "\n".join([str(val) for val in inputs.values()])
+                
+                if not query:
+                    result = "No search query provided."
+                else:
+                    logger.info(f"Searching web for: {query}")
+                    try:
+                        # Run synchronous DDGS in a thread to avoid blocking async loop
+                        def perform_search(q):
+                            with DDGS() as ddgs:
+                                return list(ddgs.text(q, max_results=3))
+                        
+                        loop = asyncio.get_event_loop()
+                        results = await loop.run_in_executor(None, perform_search, query)
+                        
+                        # Format results
+                        formatted = []
+                        for r in results:
+                            formatted.append(f"Title: {r['title']}\nURL: {r['href']}\nSnippet: {r['body']}")
+                        
+                        result = "\n---\n".join(formatted) if formatted else "No results found."
+                        
+                    except Exception as search_err:
+                        logger.error(f"Search failed: {search_err}")
+                        result = f"Search Error: {str(search_err)}"
+
             elif node.type == 'neural-llm':
                 # REAL LLM GENERATION
                 prompt_context = ""

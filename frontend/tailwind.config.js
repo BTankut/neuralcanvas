@@ -19,6 +19,7 @@ export default {
           red: '#ef4444',
           yellow: '#eab308',
           cyan: '#06b6d4',
+          orange: '#f97316',
         },
         slate: {
           900: '#0f172a',

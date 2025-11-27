@@ -71,6 +71,11 @@ function addNode(type: string, label: string) {
         <div class="w-2 h-2 rounded-full bg-neon-cyan"></div>
         Loop Iterator
     </button>
+
+    <button @click="addNode('neural-search', 'Web Search')" class="w-full text-left px-4 py-2 text-xs text-slate-300 hover:bg-neon-orange/20 hover:text-neon-orange transition-colors flex items-center gap-2">
+        <div class="w-2 h-2 rounded-full bg-neon-orange"></div>
+        Web Search
+    </button>
     
     <button @click="addNode('neural-output', 'Output')" class="w-full text-left px-4 py-2 text-xs text-slate-300 hover:bg-neon-green/20 hover:text-neon-green transition-colors flex items-center gap-2">
         <div class="w-2 h-2 rounded-full bg-neon-green"></div>

@@ -10,6 +10,7 @@ import LLMNode from '../nodes/LLMNode.vue'
 import OutputNode from '../nodes/OutputNode.vue'
 import ConditionalNode from '../nodes/ConditionalNode.vue'
 import LoopNode from '../nodes/LoopNode.vue'
+import SearchNode from '../nodes/SearchNode.vue'
 import SettingsModal from '../ui/SettingsModal.vue'
 import ConnectionStatus from '../ui/ConnectionStatus.vue'
 import CostDisplay from '../ui/CostDisplay.vue'
@@ -29,6 +30,7 @@ const nodeTypes = {
   'neural-output': markRaw(OutputNode),
   'neural-condition': markRaw(ConditionalNode),
   'neural-loop': markRaw(LoopNode),
+  'neural-search': markRaw(SearchNode),
 }
 
 // Initial nodes
