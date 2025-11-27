@@ -65,7 +65,10 @@ const selectedModelName = computed(() => {
                     <span class="text-[9px] text-neon-purple font-bold uppercase tracking-wider truncate pr-2">
                         {{ selectedModelName }}
                     </span>
-                    <div class="flex gap-1">
+                    <div class="flex gap-2 items-center">
+                         <span v-if="status.usage?.cost" class="text-[9px] text-yellow-400 font-mono">
+                            ${{ status.usage.cost.toFixed(6) }}
+                         </span>
                          <span v-if="status.status === 'success'" class="text-[9px] text-neon-green">DONE</span>
                     </div>
                 </div>

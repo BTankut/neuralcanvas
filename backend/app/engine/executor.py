@@ -143,6 +143,22 @@ class WorkflowExecutor:
                     
                     logger.info(f"LLM Execution Complete. Length: {len(current_text)}")
                     result = current_text
+                    
+                    # Calculate Usage Stats (Approximate for MVP)
+                    # Standard rule of thumb: 1 token ~= 4 characters
+                    input_tokens = len(json.dumps(messages)) // 4
+                    output_tokens = len(result) // 4
+                    
+                    await self.websocket.send_json({
+                        "type": "node_usage",
+                        "node_id": node.id,
+                        "usage": {
+                            "input_tokens": input_tokens,
+                            "output_tokens": output_tokens,
+                            "total_tokens": input_tokens + output_tokens
+                        }
+                    })
+
                 except ValueError as e:
                      logger.error(f"Value Error in LLM: {e}")
                      error_msg = str(e)

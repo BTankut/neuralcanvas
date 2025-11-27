@@ -10,6 +10,7 @@ import LLMNode from '../nodes/LLMNode.vue'
 import OutputNode from '../nodes/OutputNode.vue'
 import SettingsModal from '../ui/SettingsModal.vue'
 import ConnectionStatus from '../ui/ConnectionStatus.vue'
+import CostDisplay from '../ui/CostDisplay.vue'
 
 import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
@@ -86,6 +87,7 @@ onConnect((params) => addEdges(params))
 
     <SettingsModal ref="settingsModal" />
     <ConnectionStatus />
+    <CostDisplay />
 
     <VueFlow
       v-model="nodes"

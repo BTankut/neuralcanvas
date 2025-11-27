@@ -1,11 +1,17 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import type { Node, Edge } from '@vue-flow/core'
 
 export interface NodeExecutionStatus {
   status: 'idle' | 'running' | 'success' | 'error'
   result?: string
   stream?: string
+  usage?: {
+    input_tokens: number
+    output_tokens: number
+    total_tokens: number
+    cost?: number // Calculated on frontend
+  }
 }
 
 export const useWorkflowStore = defineStore('workflow', () => {
@@ -20,6 +26,17 @@ export const useWorkflowStore = defineStore('workflow', () => {
   const isLoadingModels = ref(false)
   const modelFetchError = ref<string | null>(null)
 
+  // Computed: Total Cost of current session/graph
+  const totalCost = computed(() => {
+    let total = 0
+    Object.values(nodeStatus.value).forEach(status => {
+        if (status.usage?.cost) {
+            total += status.usage.cost
+        }
+    })
+    return total
+  })
+
   function setNodes(newNodes: Node[]) {
     nodes.value = newNodes
   }
@@ -29,8 +46,9 @@ export const useWorkflowStore = defineStore('workflow', () => {
   }
 
   function setApiKey(key: string) {
-    apiKey.value = key
-    localStorage.setItem('neural_openrouter_key', key)
+    const trimmed = key.trim()
+    apiKey.value = trimmed
+    localStorage.setItem('neural_openrouter_key', trimmed)
     fetchModels() // Refresh models when key changes
   }
 
@@ -134,10 +152,44 @@ export const useWorkflowStore = defineStore('workflow', () => {
                 break
 
             case 'node_finish':
+                const existing = nodeStatus.value[msg.node_id]
                 nodeStatus.value[msg.node_id] = { 
+                    ...existing,
                     status: 'success', 
                     result: msg.result,
                     stream: msg.result // Finalize stream with full result
+                }
+                break
+
+            case 'node_usage':
+                const uNode = nodeStatus.value[msg.node_id]
+                if (uNode) {
+                    // Calculate Cost
+                    // We need to find the model used by this node to get pricing
+                    const nodeRef = nodes.value.find(n => n.id === msg.node_id)
+                    const modelId = nodeRef?.data?.node_config?.model || 'openai/gpt-3.5-turbo'
+                    const modelInfo = availableModels.value.find(m => m.id === modelId)
+                    
+                    let cost = 0
+                    if (modelInfo && (modelInfo as any).pricing) {
+                        const p = (modelInfo as any).pricing
+                        // Pricing is usually per 1M tokens in OpenRouter API response, 
+                        // OR per token. Let's assume OpenRouter standard: per token string usually, but let's check data.
+                        // Actually OpenRouter API returns pricing as "per 1,000,000 tokens" usually OR standard float per token.
+                        // Let's assume standard float per token for now, or debug to check.
+                        // Update: OpenRouter API 'pricing' object: { prompt: "0.000005", completion: "0.000015" } (strings)
+                        const promptPrice = parseFloat(p.prompt) || 0
+                        const completionPrice = parseFloat(p.completion) || 0
+                        cost = (msg.usage.input_tokens * promptPrice) + (msg.usage.output_tokens * completionPrice)
+                    }
+
+                    nodeStatus.value[msg.node_id] = {
+                        ...uNode,
+                        usage: {
+                            ...msg.usage,
+                            cost: cost
+                        }
+                    }
                 }
                 break
 
@@ -187,6 +239,7 @@ export const useWorkflowStore = defineStore('workflow', () => {
     availableModels,
     isLoadingModels,
     modelFetchError,
+    totalCost,
     setNodes,
     setEdges,
     runWorkflow,
