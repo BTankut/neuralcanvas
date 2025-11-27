@@ -1,0 +1,46 @@
+{
+  "id": "template-journalist",
+  "name": "The Tech Journalist",
+  "description": "Searches the web for the latest news on a topic and writes a summary article.",
+  "nodes": [
+    {
+      "id": "1",
+      "type": "neural-input",
+      "position": { "x": 50, "y": 250 },
+      "data": { "label": "Topic", "inputValue": "iPhone 16 Pro reviews" }
+    },
+    {
+      "id": "2",
+      "type": "neural-search",
+      "position": { "x": 400, "y": 250 },
+      "data": { 
+        "label": "Web Research", 
+        "node_config": { "searchQuery": "" } 
+      }
+    },
+    {
+      "id": "3",
+      "type": "neural-llm",
+      "position": { "x": 750, "y": 250 },
+      "data": { 
+        "label": "Article Writer",
+        "node_config": {
+            "model": "openai/gpt-3.5-turbo",
+            "temperature": 0.7,
+            "systemPrompt": "You are a tech journalist. Summarize the following search results into a concise, engaging blog post."
+        }
+      }
+    },
+    {
+      "id": "4",
+      "type": "neural-output",
+      "position": { "x": 1100, "y": 250 },
+      "data": { "label": "Final Article" }
+    }
+  ],
+  "edges": [
+    { "id": "e1-2", "source": "1", "target": "2", "animated": true },
+    { "id": "e2-3", "source": "2", "target": "3", "animated": true },
+    { "id": "e3-4", "source": "3", "target": "4", "animated": true }
+  ]
+}
