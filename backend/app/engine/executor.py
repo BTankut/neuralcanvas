@@ -13,61 +13,100 @@ class WorkflowExecutor:
         self.websocket = websocket
         self.node_map = {node.id: node for node in graph.nodes}
         self.execution_results: Dict[str, Any] = {} # node_id -> result
+        self.node_states: Dict[str, Dict[str, Any]] = {} # node_id -> state (for loops)
         self.api_key = graph.apiKey # Prefer key sent from client
 
     async def run(self):
         """
-        Execute the workflow using Topological Sort logic.
+        Execute the workflow using a dynamic queue based on Data Availability.
+        Supports cycles/loops by re-queueing nodes when they receive new input.
         """
         logger.info("Starting workflow execution")
         await self.websocket.send_json({"type": "execution_start"})
         
         try:
-            # 1. Build Adjacency List and In-Degree count
-            adj_list: Dict[str, List[str]] = {node.id: [] for node in self.graph.nodes}
-            in_degree: Dict[str, int] = {node.id: 0 for node in self.graph.nodes}
+            # 1. Initialize Queue with Start Nodes (Nodes with NO incoming edges)
+            # Actually, strictly nodes with in-degree 0 in the static graph analysis
+            start_nodes = [n.id for n in self.graph.nodes if not any(e.target == n.id for e in self.graph.edges)]
             
-            for edge in self.graph.edges:
-                adj_list[edge.source].append(edge.target)
-                in_degree[edge.target] += 1
-
-            # 2. Queue for nodes with 0 dependencies
-            queue = [node_id for node_id, degree in in_degree.items() if degree == 0]
+            # If graph has loops but no clear start, we might need a better heuristic, 
+            # but usually there is an Input Node.
+            queue = list(start_nodes)
             
-            if not queue and self.graph.nodes:
-                 await self.websocket.send_json({
-                    "type": "error", 
-                    "message": "Cycle detected or empty graph. Cannot execute."
-                })
-                 return
+            # Track executing tasks to avoid double-queueing if already pending?
+            # For now simple list queue.
+            
+            # To prevent infinite loops crashing the server, safety counter
+            safety_counter = 0
+            MAX_STEPS = 100
 
-            # 3. Execution Loop
-            while queue:
-                # For Phase 1, we process strictly sequentially to keep debugging easy
-                # Later we can use asyncio.gather for parallel nodes in the queue
+            while queue and safety_counter < MAX_STEPS:
+                safety_counter += 1
                 current_node_id = queue.pop(0)
                 current_node = self.node_map[current_node_id]
 
-                # Get inputs from parent nodes
+                # Get inputs
                 inputs = self._gather_inputs(current_node_id)
 
-                # Skip if inputs is None (dead branch)
-                if inputs is None:
-                    # Emit skipped event here since we can await
-                    await self.websocket.send_json({
-                        "type": "node_skipped",
-                        "node_id": current_node_id
-                    })
-                    continue
+                # Branching Logic Check:
+                # If inputs is None, it means the node was explicitly skipped by logic.
+                # If inputs is empty dict {}, it might just be a start node or logic didn't pass yet.
+                
+                # Special case: Input Node usually has no inputs but should run.
+                if not inputs and current_node.type != 'neural-input':
+                     # Check if it was skipped by a Condition
+                     # _gather_inputs returns None if ALL incoming edges were blocked.
+                     if inputs is None:
+                         await self.websocket.send_json({"type": "node_skipped", "node_id": current_node_id})
+                         # Propagate skip to neighbors? 
+                         # For MVP, just don't add neighbors to queue. Logic stops here.
+                         continue
+                     
+                     # If it returns empty dict but has incoming edges, it means inputs are NOT READY yet.
+                     # (e.g. waiting for loop back). So we skip execution for now.
+                     incoming_edges = [e for e in self.graph.edges if e.target == current_node_id]
+                     if incoming_edges:
+                         continue
 
-                # EXECUTE NODE
-                await self._execute_node(current_node, inputs)
+                # Execute
+                await self._execute_node(current_node, inputs or {}) # Pass empty dict for InputNode
 
                 # Process neighbors
-                for neighbor_id in adj_list[current_node_id]:
-                    in_degree[neighbor_id] -= 1
-                    if in_degree[neighbor_id] == 0:
-                        queue.append(neighbor_id)
+                # Find all edges starting from this node
+                outgoing_edges = [e for e in self.graph.edges if e.source == current_node_id]
+                
+                for edge in outgoing_edges:
+                    target_id = edge.target
+                    # Add target to queue.
+                    # In a loop, this will add the loop start back to queue.
+                    # Data availability check happens at the START of the loop (gather_inputs).
+                    
+                    # Logic Filter for Queueing:
+                    # If this is a conditional/loop node, only queue the neighbor connected to the ACTIVE handle.
+                    # This prevents queuing nodes on dead paths.
+                    
+                    node_result = self.execution_results.get(current_node_id)
+                    active_signal = None
+                    
+                    if isinstance(node_result, dict) and "signal" in node_result:
+                        active_signal = node_result["signal"]
+                    elif node_result in ["true", "false"]: # Legacy string signal
+                        active_signal = node_result
+                    
+                    # Check edge handle constraint
+                    edge_handle = getattr(edge, 'sourceHandle', None)
+                    
+                    if edge_handle and active_signal:
+                        if edge_handle != active_signal:
+                            continue # Don't queue this neighbor, path is blocked.
+                    
+                    # Add to queue if not already there (to prevent duplicates in same tick)
+                    # But allows re-adding for loops later.
+                    if target_id not in queue:
+                        queue.append(target_id)
+
+            if safety_counter >= MAX_STEPS:
+                logger.warning("Workflow stopped: Max execution steps reached (Infinite loop protection).")
 
             await self.websocket.send_json({"type": "execution_complete"})
 
@@ -90,34 +129,31 @@ class WorkflowExecutor:
             if source_id in self.execution_results:
                 # Check branching
                 parent_node = self.node_map.get(source_id)
-                if parent_node and parent_node.type == 'neural-condition':
+                if parent_node and (parent_node.type == 'neural-condition' or parent_node.type == 'neural-loop'):
                     parent_output = self.execution_results[source_id]
                     
-                    # Handle the new complex output object
+                    # Handle complex output object
                     parent_result = "false"
                     parent_data = ""
                     
                     if isinstance(parent_output, dict) and "signal" in parent_output:
                         parent_result = parent_output["signal"]
-                        parent_data = parent_output["data"]
+                        parent_data = parent_output.get("data", "")
                     else:
-                        # Fallback for legacy or other nodes
                         parent_result = str(parent_output)
                         parent_data = str(parent_output)
 
-                    # Using getattr safely in case Pydantic model field is missing (though I added it)
                     edge_handle = getattr(edge, 'sourceHandle', None)
                     
-                    logger.info(f"DEBUG BRANCH: Edge {edge.id} Source: {source_id} -> Target: {node_id}. Handle: {edge_handle} vs Result: {parent_result}")
-
-                    # If edge has a specific handle, it MUST match the result
+                    # Strict check: Edge must match the active signal
                     if edge_handle and edge_handle != parent_result:
                         logger.info(f"Skipping input from {source_id} to {node_id} because path {edge_handle} is not active (Result: {parent_result})")
                         continue
                         
-                    # If we pass the check, we pass the DATA
+                    # If loop continues, we might need to clear the target node's previous result
+                    # to allow it to re-execute? The main loop handles re-queueing.
                     inputs[source_id] = parent_data
-                    continue # Skip default assignment
+                    continue 
                 
                 inputs[source_id] = self.execution_results[source_id]
         
@@ -236,6 +272,61 @@ class WorkflowExecutor:
                     "data": input_text
                 }
                 await asyncio.sleep(0.1)
+
+            elif node.type == 'neural-loop':
+                # LOOP LOGIC
+                max_iterations = node.data.node_config.get("max_iterations", 3)
+                
+                # Initialize state if not exists
+                if node.id not in self.node_states:
+                    self.node_states[node.id] = {"iteration": 0}
+                
+                state = self.node_states[node.id]
+                state["iteration"] += 1
+                current_iter = state["iteration"]
+                
+                logger.info(f"Loop Node {node.id}: Iteration {current_iter}/{max_iterations}")
+                
+                # Send status update to frontend
+                await self.websocket.send_json({
+                    "type": "node_usage", # Reuse usage event to update iteration count UI
+                    "node_id": node.id,
+                    "usage": {
+                        "current_iteration": current_iter,
+                        "max_iterations": max_iterations,
+                        "input_tokens": 0,
+                        "output_tokens": 0,
+                        "total_tokens": 0
+                    }
+                })
+
+                if current_iter <= max_iterations:
+                    # CONTINUE LOOP
+                    result = {
+                        "signal": "loop",
+                        "iteration": current_iter,
+                        "data": str(inputs) # Pass inputs through
+                    }
+                    
+                    # IMPORTANT: We need to reset downstream nodes in the loop so they can run again!
+                    # Ideally we should traverse the 'loop' edge and clear execution_results for those nodes.
+                    # For this MVP, we will allow re-execution by NOT adding this Loop node to 'executed_nodes' list 
+                    # in a way that blocks it, OR by explicitly managing the queue.
+                    # Actually, the queue management in 'run' loop handles re-adding neighbors.
+                    # But we need to clear 'self.execution_results' for the target node of the loop 
+                    # so it thinks it's fresh? No, DAG logic might just overwrite.
+                    # Let's trust the overwriting behavior for now.
+                    
+                else:
+                    # FINISH LOOP
+                    result = {
+                        "signal": "done",
+                        "data": str(inputs)
+                    }
+                    # Reset state for next full run (optional, or keep it for history)
+                    # self.node_states[node.id] = {"iteration": 0} 
+
+                await asyncio.sleep(0.2)
 
             elif node.type == 'neural-output':
                 # Output node aggregates inputs

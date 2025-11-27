@@ -9,6 +9,7 @@ import InputNode from '../nodes/InputNode.vue'
 import LLMNode from '../nodes/LLMNode.vue'
 import OutputNode from '../nodes/OutputNode.vue'
 import ConditionalNode from '../nodes/ConditionalNode.vue'
+import LoopNode from '../nodes/LoopNode.vue'
 import SettingsModal from '../ui/SettingsModal.vue'
 import ConnectionStatus from '../ui/ConnectionStatus.vue'
 import CostDisplay from '../ui/CostDisplay.vue'
@@ -27,6 +28,7 @@ const nodeTypes = {
   'neural-llm': markRaw(LLMNode),
   'neural-output': markRaw(OutputNode),
   'neural-condition': markRaw(ConditionalNode),
+  'neural-loop': markRaw(LoopNode),
 }
 
 // Initial nodes
@@ -35,32 +37,36 @@ const nodes = ref([
     id: '1',
     type: 'neural-input',
     position: { x: 50, y: 200 },
-    data: { label: 'Start', inputValue: 'Tell me a secret about cooking.' }
+    data: { label: 'Start', inputValue: 'Loop Test Start' }
   },
   {
     id: '2',
-    type: 'neural-condition',
+    type: 'neural-loop',
     position: { x: 400, y: 200 },
-    data: { label: 'Check Topic', node_config: { conditionType: 'contains', targetValue: 'physics' } }
+    data: { label: 'Iterator', node_config: { max_iterations: 3 } }
   },
   {
     id: '3',
     type: 'neural-llm',
     position: { x: 800, y: 50 },
-    data: { label: 'Physics Expert' }
+    data: { label: 'Looped Worker' }
   },
   {
     id: '4',
     type: 'neural-output',
     position: { x: 800, y: 350 },
-    data: { label: 'Other Topics' }
+    data: { label: 'Final Result' }
   },
 ])
 
 const edges = ref([
   { id: 'e1-2', source: '1', target: '2', animated: true },
-  { id: 'e2-3', source: '2', target: '3', sourceHandle: 'true', animated: true, style: { stroke: '#10b981' } },
-  { id: 'e2-4', source: '2', target: '4', sourceHandle: 'false', animated: true, style: { stroke: '#ef4444' } },
+  // Loop Path: Loop Node -> AI Node
+  { id: 'e2-3', source: '2', target: '3', sourceHandle: 'loop', animated: true, style: { stroke: '#06b6d4' } },
+  // Loop Back: AI Node -> Loop Node (This closes the cycle)
+  { id: 'e3-2', source: '3', target: '2', animated: true, style: { stroke: '#06b6d4', strokeDasharray: '5,5' } },
+  // Done Path: Loop Node -> Output
+  { id: 'e2-4', source: '2', target: '4', sourceHandle: 'done', animated: true, style: { stroke: '#10b981' } },
 ])
 
 // Sync with store
