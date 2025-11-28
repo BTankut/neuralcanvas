@@ -461,6 +461,43 @@ const builtInTemplates = [
                 { id: "e3-4", source: "3", target: "4", animated: true }
             ]
         }
+    },
+    {
+        id: 'template-moa-vs-debate',
+        name: '⚔️ The Ultimate Battle: MoA vs Debate',
+        description: 'A face-off between Mixture-of-Agents and Multi-Agent Debate on a complex topic.',
+        icon: 'PhSquaresFour',
+        data: {
+            nodes: [
+                { id: "1", type: "neural-input", position: { x: 50, y: 400 }, data: { label: "The Big Question", inputValue: "Is Universal Basic Income (UBI) necessary for a post-AI economy? Analyze economic and social impacts." } },
+                
+                // Team MoA (Top)
+                { id: "2", type: "neural-moa-proposer", position: { x: 500, y: 100 }, data: { label: "Team MoA: Proposers", node_config: { models: ["openai/gpt-4-turbo", "anthropic/claude-3.5-sonnet", "meta-llama/llama-3.1-70b-instruct"], temperature: 0.7 } } },
+                { id: "3", type: "neural-moa-aggregator", position: { x: 900, y: 100 }, data: { label: "Team MoA: Aggregator", node_config: { model: "openai/gpt-4-turbo", temperature: 0.6, strategy: "synthesis" } } },
+                
+                // Team Debate (Bottom)
+                { id: "4", type: "neural-debate", position: { x: 500, y: 600 }, data: { label: "Team Debate: Arena", node_config: { model: "openai/gpt-3.5-turbo", debaters: 3, rounds: 3, temperature: 0.8 } } },
+                { id: "5", type: "neural-voting", position: { x: 900, y: 600 }, data: { label: "Team Debate: Judge", node_config: { model: "openai/gpt-4-turbo", method: "judge", temperature: 0.5 } } },
+                
+                // The Verdict
+                { id: "6", type: "neural-llm", position: { x: 1350, y: 350 }, data: { label: "Grand Arbiter", node_config: { model: "openai/gpt-4-turbo", temperature: 0.5, systemPrompt: "You are the Grand Arbiter. You have received two high-quality analyses on the same topic from different AI methodologies (MoA and Debate).\n\n1. Compare the two approaches.\n2. Highlight the unique insights from each.\n3. Synthesize a final, definitive answer combining the best of both worlds." } } },
+                { id: "7", type: "neural-output", position: { x: 1750, y: 350 }, data: { label: "Final Synthesis" } }
+            ],
+            edges: [
+                // MoA Path
+                { id: "e1-2", source: "1", target: "2", animated: true, style: { stroke: "#06b6d4" } },
+                { id: "e2-3", source: "2", target: "3", animated: true, style: { stroke: "#06b6d4" } },
+                { id: "e3-6", source: "3", target: "6", animated: true, style: { stroke: "#06b6d4" } },
+                
+                // Debate Path
+                { id: "e1-4", source: "1", target: "4", animated: true, style: { stroke: "#ef4444" } },
+                { id: "e4-5", source: "4", target: "5", animated: true, style: { stroke: "#ef4444" } },
+                { id: "e5-6", source: "5", target: "6", animated: true, style: { stroke: "#ef4444" } },
+                
+                // Final
+                { id: "e6-7", source: "6", target: "7", animated: true }
+            ]
+        }
     }
 ]
 
