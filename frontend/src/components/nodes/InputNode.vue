@@ -1,11 +1,21 @@
 <script setup lang="ts">
 import { Handle, Position, useNode } from '@vue-flow/core'
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted, onUnmounted } from 'vue'
 import { PhArrowsOutSimple, PhX } from '@phosphor-icons/vue'
 
 const { node } = useNode()
 const inputValue = ref(node.data?.inputValue || '')
 const isExpanded = ref(false)
+
+// Close on ESC
+const handleKeydown = (e: KeyboardEvent) => {
+    if (isExpanded.value && e.key === 'Escape') {
+        isExpanded.value = false
+    }
+}
+
+onMounted(() => window.addEventListener('keydown', handleKeydown))
+onUnmounted(() => window.removeEventListener('keydown', handleKeydown))
 
 // Sync local input -> node data
 watch(inputValue, (val) => {

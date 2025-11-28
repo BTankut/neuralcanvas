@@ -1,11 +1,23 @@
 <script setup lang="ts">
 import { Handle, Position, useNode, useNodeId } from '@vue-flow/core'
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, onMounted, onUnmounted } from 'vue'
 import { useWorkflowStore } from '../../stores/workflow'
+import { PhArrowsOutSimple, PhX } from '@phosphor-icons/vue'
 
 const { node } = useNode()
 const nodeId = useNodeId()
 const store = useWorkflowStore()
+const isExpanded = ref(false)
+
+// Close on ESC
+const handleKeydown = (e: KeyboardEvent) => {
+    if (isExpanded.value && e.key === 'Escape') {
+        isExpanded.value = false
+    }
+}
+
+onMounted(() => window.addEventListener('keydown', handleKeydown))
+onUnmounted(() => window.removeEventListener('keydown', handleKeydown))
 
 // Configuration
 const model = ref(node.data?.node_config?.model || 'openai/gpt-4-turbo')
@@ -58,6 +70,11 @@ const selectedModelName = computed(() => {
     <div class="absolute -top-6 -left-4 w-12 h-12 bg-slate-900 rounded-xl border border-neon-blue/50 shadow-[0_0_15px_rgba(59,130,246,0.5)] flex items-center justify-center z-20 transform group-hover:scale-110 transition-all duration-300">
         <img src="/assets/icons/moa.png" class="w-8 h-8 object-contain" :class="{'animate-pulse': isRunning}" alt="MoA Agg" />
     </div>
+
+    <!-- Expand Button -->
+    <button v-if="streamText" @click="isExpanded = true" class="absolute top-2 right-2 text-slate-500 hover:text-neon-blue transition-colors z-30">
+        <PhArrowsOutSimple weight="bold" />
+    </button>
 
     <!-- Header -->
     <div class="node-header bg-neon-blue/20 border-b border-neon-blue/30 text-neon-blue flex justify-center items-center min-h-[40px] relative pl-6">
@@ -124,6 +141,26 @@ const selectedModelName = computed(() => {
 
     <Handle type="target" :position="Position.Left" class="neural-handle" />
     <Handle type="source" :position="Position.Right" class="neural-handle" />
+
+    <!-- Expanded Modal -->
+    <Teleport to="body">
+        <div v-if="isExpanded" class="fixed inset-0 z-[100] flex items-center justify-center p-8 bg-black/80 backdrop-blur-sm" @click="isExpanded = false">
+            <div class="bg-slate-900 border border-neon-blue rounded-lg w-full max-w-4xl h-[80vh] flex flex-col shadow-2xl relative" @click.stop>
+                <div class="flex justify-between items-center p-4 border-b border-slate-700">
+                    <h2 class="text-neon-blue font-mono font-bold text-lg">MOA SYNTHESIS</h2>
+                    <button @click="isExpanded = false" class="text-slate-400 hover:text-white">
+                        <PhX weight="bold" class="text-xl" />
+                    </button>
+                </div>
+                <div class="w-full h-full bg-black/50 text-slate-200 p-6 overflow-y-auto custom-scrollbar font-mono text-sm leading-relaxed whitespace-pre-wrap">
+                    {{ streamText }}
+                </div>
+                <div class="p-2 bg-slate-800/50 text-center text-[10px] text-slate-500">
+                    Press ESC to close
+                </div>
+            </div>
+        </div>
+    </Teleport>
   </div>
 </template>
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Handle, Position, useNodeId } from '@vue-flow/core'
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useWorkflowStore } from '../../stores/workflow'
 import { PhArrowsOutSimple, PhX } from '@phosphor-icons/vue'
 
@@ -8,6 +8,16 @@ defineProps(['data'])
 const nodeId = useNodeId()
 const store = useWorkflowStore()
 const isExpanded = ref(false)
+
+// Close on ESC
+const handleKeydown = (e: KeyboardEvent) => {
+    if (isExpanded.value && e.key === 'Escape') {
+        isExpanded.value = false
+    }
+}
+
+onMounted(() => window.addEventListener('keydown', handleKeydown))
+onUnmounted(() => window.removeEventListener('keydown', handleKeydown))
 
 const status = computed(() => store.nodeStatus[nodeId] || { status: 'idle' } as any)
 const result = computed(() => status.value.result)
