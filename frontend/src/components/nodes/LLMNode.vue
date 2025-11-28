@@ -69,7 +69,7 @@ const selectedModelName = computed(() => {
     <div v-if="isRunning" class="absolute -inset-1 bg-neon-purple/20 blur-lg rounded-lg animate-pulse z-0"></div>
 
     <!-- Expand Button -->
-    <button v-if="streamText" @click="isExpanded = true" class="absolute top-2 right-2 text-slate-500 hover:text-neon-purple transition-colors z-30">
+    <button @click="isExpanded = true" class="absolute top-2 right-2 text-slate-500 hover:text-neon-purple transition-colors z-30">
         <PhArrowsOutSimple weight="bold" />
     </button>
 
@@ -149,7 +149,7 @@ const selectedModelName = computed(() => {
                     </button>
                 </div>
                 <div class="w-full h-full bg-black/50 text-slate-200 p-6 overflow-y-auto custom-scrollbar font-mono text-sm leading-relaxed whitespace-pre-wrap">
-                    {{ streamText }}
+                    {{ streamText || 'No output generated yet.' }}
                 </div>
                 <div class="p-2 bg-slate-800/50 text-center text-[10px] text-slate-500">
                     Press ESC to close
