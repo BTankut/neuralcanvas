@@ -52,7 +52,8 @@ export const useWorkflowStore = defineStore('workflow', () => {
       if (!categories[provider]) {
         categories[provider] = []
       }
-      categories[provider].push(model)
+      // We know it exists now
+      categories[provider]!.push(model)
     })
 
     // Convert to array format for optgroup rendering

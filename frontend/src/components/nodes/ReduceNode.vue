@@ -52,27 +52,24 @@ const selectedModelName = computed(() => {
 </script>
 
 <template>
-  <div
+  <div 
     class="neural-node-base reduce-node w-64 relative transition-all duration-300 group"
     :class="{
-        'ring-2 ring-cyan-500 shadow-[0_0_30px_rgba(6,182,212,0.6)]': isRunning,
-        'border-neon-green': status.status === 'success',
-        'border-neon-red': status.status === 'error'
+        'ring-2 ring-neon-orange shadow-[0_0_30px_rgba(249,115,22,0.6)]': isRunning,
+        'border-neon-orange': true
     }"
   >
-    <!-- Status Pulse -->
-    <div v-if="isRunning" class="absolute -inset-1 bg-cyan-500/20 blur-lg rounded-lg animate-pulse z-0"></div>
-
-    <!-- Icon Badge -->
-    <div class="absolute -top-6 -left-4 w-12 h-12 bg-slate-900 rounded-xl border border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.5)] flex items-center justify-center z-20 transform group-hover:scale-110 transition-all duration-300">
-        <span class="text-2xl">🔄</span>
+    <!-- Glowing Icon Badge -->
+    <div class="absolute -top-6 -left-4 w-12 h-12 bg-slate-900 rounded-xl border border-neon-orange/50 shadow-[0_0_15px_rgba(249,115,22,0.5)] flex items-center justify-center z-20 transform group-hover:scale-110 transition-all duration-300">
+        <img src="/assets/icons/reduce.png" class="w-8 h-8 object-contain" :class="{'animate-pulse': isRunning}" alt="Reduce" />
     </div>
 
-    <div class="relative z-10 bg-slate-900/90 rounded-lg">
-        <div class="node-header bg-cyan-500/20 border-b border-cyan-500/30 text-cyan-500 flex justify-center items-center min-h-[40px]">
-            <span class="font-bold text-xs tracking-wider uppercase">Reducer</span>
-            <div v-if="isRunning" class="w-2 h-2 bg-cyan-500 rounded-full animate-ping ml-2"></div>
-        </div>
+    <!-- Header -->
+    <div class="node-header bg-neon-orange/20 border-b border-neon-orange/30 text-neon-orange flex justify-center items-center min-h-[40px] relative pl-6">
+        <span class="font-bold text-xs tracking-wider uppercase">Reducer / Summarizer</span>
+        <span v-if="status.status === 'success'" class="absolute right-2 text-[9px] font-bold text-neon-green">COMPLETE</span>
+    </div>
+
 
         <div class="node-body p-3 space-y-3">
             <!-- Live Stream Display -->
@@ -139,7 +136,6 @@ const selectedModelName = computed(() => {
                 </div>
             </div>
         </div>
-    </div>
 
     <Handle type="target" :position="Position.Left" class="neural-handle" />
     <Handle type="source" :position="Position.Right" class="neural-handle" />

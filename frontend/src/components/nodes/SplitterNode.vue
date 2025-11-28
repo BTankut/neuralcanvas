@@ -47,27 +47,23 @@ const result = computed(() => {
 </script>
 
 <template>
-  <div
+  <div 
     class="neural-node-base splitter-node w-64 relative transition-all duration-300 group"
     :class="{
-        'ring-2 ring-orange-500 shadow-[0_0_30px_rgba(249,115,22,0.6)]': isRunning,
-        'border-neon-green': status.status === 'success',
-        'border-neon-red': status.status === 'error'
+        'ring-2 ring-neon-yellow shadow-[0_0_30px_rgba(234,179,8,0.6)]': isRunning,
+        'border-neon-yellow': true
     }"
   >
-    <!-- Status Pulse -->
-    <div v-if="isRunning" class="absolute -inset-1 bg-orange-500/20 blur-lg rounded-lg animate-pulse z-0"></div>
-
-    <!-- Icon Badge -->
-    <div class="absolute -top-6 -left-4 w-12 h-12 bg-slate-900 rounded-xl border border-orange-500/50 shadow-[0_0_15px_rgba(249,115,22,0.5)] flex items-center justify-center z-20 transform group-hover:scale-110 transition-all duration-300">
-        <span class="text-2xl">✂️</span>
+    <!-- Glowing Icon Badge -->
+    <div class="absolute -top-6 -left-4 w-12 h-12 bg-slate-900 rounded-xl border border-neon-yellow/50 shadow-[0_0_15px_rgba(234,179,8,0.5)] flex items-center justify-center z-20 transform group-hover:scale-110 transition-all duration-300">
+        <img src="/assets/icons/split.png" class="w-8 h-8 object-contain" :class="{'animate-pulse': isRunning}" alt="Split" />
     </div>
 
-    <div class="relative z-10 bg-slate-900/90 rounded-lg">
-        <div class="node-header bg-orange-500/20 border-b border-orange-500/30 text-orange-500 flex justify-center items-center min-h-[40px]">
-            <span class="font-bold text-xs tracking-wider uppercase">Document Splitter</span>
-            <div v-if="isRunning" class="w-2 h-2 bg-orange-500 rounded-full animate-ping ml-2"></div>
-        </div>
+    <!-- Header -->
+    <div class="node-header bg-neon-yellow/20 border-b border-neon-yellow/30 text-neon-yellow flex justify-center items-center min-h-[40px] relative pl-6">
+        <span class="font-bold text-xs tracking-wider uppercase">Text Splitter</span>
+        <span v-if="status.chunks" class="absolute right-2 text-[9px] font-bold text-neon-blue">{{ status.chunks }} CHUNKS</span>
+    </div>
 
         <div class="node-body p-3 space-y-3">
             <!-- Result Display -->
@@ -117,7 +113,6 @@ const result = computed(() => {
                 </div>
             </div>
         </div>
-    </div>
 
     <Handle type="target" :position="Position.Left" class="neural-handle" />
     <Handle type="source" :position="Position.Right" class="neural-handle" />

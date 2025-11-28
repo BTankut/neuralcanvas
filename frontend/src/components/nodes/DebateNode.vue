@@ -44,35 +44,28 @@ watch(() => node.data?.node_config?.temperature, (newVal) => {
 const status = computed(() => store.nodeStatus[nodeId] || { status: 'idle' } as any)
 const isRunning = computed(() => status.value.status === 'running')
 const streamText = computed(() => status.value.stream || '')
-
-const selectedModelName = computed(() => {
-    const found = store.availableModels.find(m => m.id === model.value)
-    return found ? found.name : model.value
-})
 </script>
 
 <template>
-  <div
+  <div 
     class="neural-node-base debate-node w-64 relative transition-all duration-300 group"
     :class="{
-        'ring-2 ring-red-500 shadow-[0_0_30px_rgba(239,68,68,0.6)]': isRunning,
-        'border-neon-green': status.status === 'success',
-        'border-neon-red': status.status === 'error'
+        'ring-2 ring-neon-red shadow-[0_0_30px_rgba(239,68,68,0.6)]': isRunning,
+        'border-neon-red': true
     }"
   >
-    <!-- Status Pulse -->
-    <div v-if="isRunning" class="absolute -inset-1 bg-red-500/20 blur-lg rounded-lg animate-pulse z-0"></div>
-
-    <!-- Icon Badge -->
-    <div class="absolute -top-6 -left-4 w-12 h-12 bg-slate-900 rounded-xl border border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.5)] flex items-center justify-center z-20 transform group-hover:scale-110 transition-all duration-300">
-        <span class="text-2xl">⚔️</span>
+    <!-- Glowing Icon Badge -->
+    <div class="absolute -top-6 -left-4 w-12 h-12 bg-slate-900 rounded-xl border border-neon-red/50 shadow-[0_0_15px_rgba(239,68,68,0.5)] flex items-center justify-center z-20 transform group-hover:scale-110 transition-all duration-300">
+        <img src="/assets/icons/debate.png" class="w-8 h-8 object-contain" :class="{'animate-pulse': isRunning}" alt="Debate" />
     </div>
 
-    <div class="relative z-10 bg-slate-900/90 rounded-lg">
-        <div class="node-header bg-red-500/20 border-b border-red-500/30 text-red-500 flex justify-center items-center min-h-[40px]">
-            <span class="font-bold text-xs tracking-wider uppercase">Debate Arena</span>
-            <div v-if="isRunning" class="w-2 h-2 bg-red-500 rounded-full animate-ping ml-2"></div>
+    <!-- Header -->
+    <div class="node-header bg-neon-red/20 border-b border-neon-red/30 text-neon-red flex justify-center items-center min-h-[40px] relative pl-6">
+        <span class="font-bold text-xs tracking-wider uppercase">Debate Room</span>
+        <div v-if="status.round" class="absolute right-2 px-2 py-0.5 bg-black/50 rounded text-[9px] font-mono border border-neon-red/50">
+             R: {{ status.round }}
         </div>
+    </div>
 
         <div class="node-body p-3 space-y-3">
             <!-- Live Stream Display -->
@@ -145,7 +138,6 @@ const selectedModelName = computed(() => {
                 </div>
             </div>
         </div>
-    </div>
 
     <Handle type="target" :position="Position.Left" class="neural-handle" />
     <Handle type="source" :position="Position.Right" class="neural-handle" />

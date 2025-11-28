@@ -47,27 +47,24 @@ const selectedModelName = computed(() => {
 </script>
 
 <template>
-  <div
+  <div 
     class="neural-node-base voting-node w-64 relative transition-all duration-300 group"
     :class="{
-        'ring-2 ring-amber-500 shadow-[0_0_30px_rgba(245,158,11,0.6)]': isRunning,
-        'border-neon-green': status.status === 'success',
-        'border-neon-red': status.status === 'error'
+        'ring-2 ring-neon-purple shadow-[0_0_30px_rgba(168,85,247,0.6)]': isRunning,
+        'border-neon-purple': true
     }"
   >
-    <!-- Status Pulse -->
-    <div v-if="isRunning" class="absolute -inset-1 bg-amber-500/20 blur-lg rounded-lg animate-pulse z-0"></div>
-
-    <!-- Icon Badge -->
-    <div class="absolute -top-6 -left-4 w-12 h-12 bg-slate-900 rounded-xl border border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.5)] flex items-center justify-center z-20 transform group-hover:scale-110 transition-all duration-300">
-        <span class="text-2xl">🗳️</span>
+    <!-- Glowing Icon Badge -->
+    <div class="absolute -top-6 -left-4 w-12 h-12 bg-slate-900 rounded-xl border border-neon-purple/50 shadow-[0_0_15px_rgba(168,85,247,0.5)] flex items-center justify-center z-20 transform group-hover:scale-110 transition-all duration-300">
+        <img src="/assets/icons/vote.png" class="w-8 h-8 object-contain" :class="{'animate-pulse': isRunning}" alt="Voting" />
     </div>
 
-    <div class="relative z-10 bg-slate-900/90 rounded-lg">
-        <div class="node-header bg-amber-500/20 border-b border-amber-500/30 text-amber-500 flex justify-center items-center min-h-[40px]">
-            <span class="font-bold text-xs tracking-wider uppercase">Judge & Voting</span>
-            <div v-if="isRunning" class="w-2 h-2 bg-amber-500 rounded-full animate-ping ml-2"></div>
-        </div>
+    <!-- Header -->
+    <div class="node-header bg-neon-purple/20 border-b border-neon-purple/30 text-neon-purple flex justify-center items-center min-h-[40px] relative pl-6">
+        <span class="font-bold text-xs tracking-wider uppercase">Judge / Voting</span>
+        <span v-if="status.status === 'success'" class="absolute right-2 text-[9px] font-bold text-neon-green">DECIDED</span>
+    </div>
+
 
         <div class="node-body p-3 space-y-3">
             <!-- Live Stream Display -->
@@ -124,7 +121,6 @@ const selectedModelName = computed(() => {
                 </div>
             </div>
         </div>
-    </div>
 
     <Handle type="target" :position="Position.Left" class="neural-handle" />
     <Handle type="source" :position="Position.Right" class="neural-handle" />

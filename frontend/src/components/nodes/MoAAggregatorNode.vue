@@ -47,27 +47,24 @@ const selectedModelName = computed(() => {
 </script>
 
 <template>
-  <div
+  <div 
     class="neural-node-base moa-aggregator-node w-64 relative transition-all duration-300 group"
     :class="{
-        'ring-2 ring-pink-500 shadow-[0_0_30px_rgba(236,72,153,0.6)]': isRunning,
-        'border-neon-green': status.status === 'success',
-        'border-neon-red': status.status === 'error'
+        'ring-2 ring-neon-blue shadow-[0_0_30px_rgba(59,130,246,0.6)]': isRunning,
+        'border-neon-blue': true
     }"
   >
-    <!-- Status Pulse -->
-    <div v-if="isRunning" class="absolute -inset-1 bg-pink-500/20 blur-lg rounded-lg animate-pulse z-0"></div>
-
-    <!-- Icon Badge -->
-    <div class="absolute -top-6 -left-4 w-12 h-12 bg-slate-900 rounded-xl border border-pink-500/50 shadow-[0_0_15px_rgba(236,72,153,0.5)] flex items-center justify-center z-20 transform group-hover:scale-110 transition-all duration-300">
-        <span class="text-2xl">🎯</span>
+    <!-- Glowing Icon Badge -->
+    <div class="absolute -top-6 -left-4 w-12 h-12 bg-slate-900 rounded-xl border border-neon-blue/50 shadow-[0_0_15px_rgba(59,130,246,0.5)] flex items-center justify-center z-20 transform group-hover:scale-110 transition-all duration-300">
+        <img src="/assets/icons/moa.png" class="w-8 h-8 object-contain" :class="{'animate-pulse': isRunning}" alt="MoA Agg" />
     </div>
 
-    <div class="relative z-10 bg-slate-900/90 rounded-lg">
-        <div class="node-header bg-pink-500/20 border-b border-pink-500/30 text-pink-500 flex justify-center items-center min-h-[40px]">
-            <span class="font-bold text-xs tracking-wider uppercase">MoA Aggregator</span>
-            <div v-if="isRunning" class="w-2 h-2 bg-pink-500 rounded-full animate-ping ml-2"></div>
-        </div>
+    <!-- Header -->
+    <div class="node-header bg-neon-blue/20 border-b border-neon-blue/30 text-neon-blue flex justify-center items-center min-h-[40px] relative pl-6">
+        <span class="font-bold text-xs tracking-wider uppercase">MoA Aggregator</span>
+        <span v-if="status.status === 'success'" class="absolute right-2 text-[9px] font-bold text-neon-green">DONE</span>
+    </div>
+
 
         <div class="node-body p-3 space-y-3">
             <!-- Live Stream Display -->
@@ -124,7 +121,6 @@ const selectedModelName = computed(() => {
                 </div>
             </div>
         </div>
-    </div>
 
     <Handle type="target" :position="Position.Left" class="neural-handle" />
     <Handle type="source" :position="Position.Right" class="neural-handle" />
