@@ -228,7 +228,6 @@ onConnect((params) => addEdges(params))
         <!-- Status Indicators (Compact) -->
         <div class="flex gap-1 mr-2 border-r border-slate-700 pr-2 h-10 items-center">
             <ConnectionStatus />
-            <CostDisplay />
         </div>
 
         <!-- Canvas Controls (Undo/Redo/Clear) -->
@@ -286,12 +285,14 @@ onConnect((params) => addEdges(params))
         </button>
     </div>
 
-    <!-- RUN FLOW Button (Bottom Right) -->
-    <div class="absolute bottom-6 right-6 z-50">
+    <!-- Bottom Right Controls -->
+    <div class="absolute bottom-6 right-6 z-50 flex items-center gap-3">
+        <CostDisplay />
+        
         <button 
             @click="store.runWorkflow"
             :disabled="store.isExecuting"
-            class="px-8 py-3 bg-neon-blue/20 border border-neon-blue text-neon-blue rounded-full hover:bg-neon-blue hover:text-black transition-all font-bold shadow-[0_0_20px_rgba(59,130,246,0.6)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 backdrop-blur-md text-sm tracking-widest transform hover:scale-105 active:scale-95"
+            class="px-8 py-3 bg-neon-blue/20 border border-neon-blue text-neon-blue rounded-full hover:bg-neon-blue hover:text-black transition-all font-bold shadow-[0_0_20px_rgba(59,130,246,0.6)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 backdrop-blur-md text-sm tracking-widest transform hover:scale-105 active:scale-95 h-12"
         >
             <PhSpinner v-if="store.isExecuting" class="animate-spin w-5 h-5" />
             <span v-if="!store.isExecuting">RUN FLOW</span>
