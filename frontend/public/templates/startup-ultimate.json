@@ -6,8 +6,6 @@
             "position": { "x": 50, "y": 400 },
             "data": { "label": "Startup Idea", "inputValue": "A social network for house plants where they can rate their owners." }
         },
-        
-        // NEW NODE: QUERY GENERATOR
         {
             "id": "query-gen",
             "type": "neural-llm",
@@ -21,15 +19,12 @@
                 }
             }
         },
-
         {
             "id": "2",
             "type": "neural-search",
             "position": { "x": 750, "y": 400 },
             "data": { "label": "Market Intel", "node_config": { "searchQuery": "" } }
         },
-        
-        // Shifted X positions for subsequent nodes to fit the new node
         {
             "id": "3",
             "type": "neural-moa-proposer",
@@ -123,33 +118,20 @@
         }
     ],
     "edges": [
-        // Intro Flow with Query Gen
         { "id": "e1-q", "source": "1", "target": "query-gen", "animated": true },
         { "id": "eq-2", "source": "query-gen", "target": "2", "animated": true },
-        
-        // Search -> Strategy
         { "id": "e2-3", "source": "2", "target": "3", "animated": true },
         { "id": "e3-4", "source": "3", "target": "4", "animated": true, "style": { "stroke": "#06b6d4" } },
-
-        // Branching Out from Strategy
         { "id": "e4-5", "source": "4", "target": "5", "animated": true, "label": "Tech Specs" },
         { "id": "e4-8", "source": "4", "target": "8", "animated": true, "label": "Legal Check" },
         { "id": "e4-10", "source": "4", "target": "10", "animated": true, "label": "Financials" },
-
-        // Tech Loop
         { "id": "e5-6", "source": "5", "target": "6", "animated": true },
         { "id": "e6-7", "source": "6", "target": "7", "sourceHandle": "loop", "animated": true, "style": { "stroke": "#06b6d4" } },
         { "id": "e7-6", "source": "7", "target": "6", "animated": true, "style": { "stroke": "#06b6d4", "strokeDasharray": "5,5" } },
         { "id": "e6-11", "source": "6", "target": "11", "sourceHandle": "done", "animated": true, "style": { "stroke": "#10b981" } },
-
-        // Legal Flow
         { "id": "e8-9", "source": "8", "target": "9", "animated": true },
         { "id": "e9-11", "source": "9", "target": "11", "animated": true, "style": { "stroke": "#ef4444" } },
-
-        // Finance Flow
         { "id": "e10-11", "source": "10", "target": "11", "animated": true, "style": { "stroke": "#f59e0b" } },
-
-        // Final Output
         { "id": "e11-12", "source": "11", "target": "12", "animated": true }
     ]
 }
