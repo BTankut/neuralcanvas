@@ -3,6 +3,7 @@ import { Handle, Position, useNodeId, useNode } from '@vue-flow/core'
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useWorkflowStore } from '../../stores/workflow'
 import { PhArrowsOutSimple, PhX } from '@phosphor-icons/vue'
+import ModelSelector from '../ui/ModelSelector.vue'
 
 const props = defineProps(['data'])
 const nodeId = useNodeId()
@@ -108,15 +109,12 @@ const selectedModelName = computed(() => {
             <div v-else class="space-y-3">
                 <div>
                     <label class="text-[10px] text-slate-400 mb-1 block uppercase">Model</label>
-                    <select v-model="model" class="w-full bg-black/50 border border-slate-700 rounded text-xs text-slate-200 p-1 focus:border-neon-purple outline-none">
-                        <option v-if="store.isLoadingModels" disabled value="">Loading models...</option>
-                        <option v-else-if="store.modelFetchError" disabled value="">Error: {{ store.modelFetchError }}</option>
-                        <optgroup v-for="cat in store.categorizedModels" :key="cat.category" :label="cat.category">
-                            <option v-for="m in cat.models" :key="m.id" :value="m.id">
-                                {{ m.name }}
-                            </option>
-                        </optgroup>
-                    </select>
+                    <ModelSelector
+                        v-model="model"
+                        :options="store.categorizedModels"
+                        :loading="store.isLoadingModels"
+                        :error="store.modelFetchError"
+                    />
                 </div>
 
                 <div>

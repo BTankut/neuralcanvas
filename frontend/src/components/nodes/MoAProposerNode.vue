@@ -3,6 +3,7 @@ import { Handle, Position, useNode, useNodeId } from '@vue-flow/core'
 import { ref, watch, computed, onMounted, onUnmounted } from 'vue'
 import { useWorkflowStore } from '../../stores/workflow'
 import { PhArrowsOutSimple, PhX } from '@phosphor-icons/vue'
+import ModelSelector from '../ui/ModelSelector.vue'
 
 const { node } = useNode()
 const nodeId = useNodeId()
@@ -111,16 +112,15 @@ const result = computed(() => status.value.result) // MoA Proposer results usual
                 </div>
 
                 <!-- Add Model -->
-                <div class="flex gap-1">
-                    <select v-model="addModelSelect" class="w-full bg-black/50 border border-slate-700 rounded text-xs text-slate-200 p-1 focus:border-neon-purple outline-none">
-                        <option value="" disabled>Select model...</option>
-                        <optgroup v-for="cat in store.categorizedModels" :key="cat.category" :label="cat.category">
-                            <option v-for="m in cat.models" :key="m.id" :value="m.id">
-                                {{ m.name }}
-                            </option>
-                        </optgroup>
-                    </select>
-                    <button @click="addModel" class="bg-neon-purple/20 hover:bg-neon-purple/40 border border-neon-purple/50 text-neon-purple px-2 rounded">+</button>
+                <div class="flex gap-1 items-start">
+                    <ModelSelector
+                        v-model="addModelSelect"
+                        :options="store.categorizedModels"
+                        :loading="store.isLoadingModels"
+                        placeholder="Add model..."
+                        class="flex-1"
+                    />
+                    <button @click="addModel" class="bg-neon-purple/20 hover:bg-neon-purple/40 border border-neon-purple/50 text-neon-purple px-3 py-1.5 rounded h-full transition-colors font-bold text-lg leading-none flex items-center justify-center min-h-[28px]">+</button>
                 </div>
             </div>
 
