@@ -10,6 +10,13 @@ import OutputNode from '../nodes/OutputNode.vue'
 import ConditionalNode from '../nodes/ConditionalNode.vue'
 import LoopNode from '../nodes/LoopNode.vue'
 import SearchNode from '../nodes/SearchNode.vue'
+import SplitterNode from '../nodes/SplitterNode.vue'
+import ReduceNode from '../nodes/ReduceNode.vue'
+import SelfConsistencyNode from '../nodes/SelfConsistencyNode.vue'
+import MoAProposerNode from '../nodes/MoAProposerNode.vue'
+import MoAAggregatorNode from '../nodes/MoAAggregatorNode.vue'
+import DebateNode from '../nodes/DebateNode.vue'
+import VotingNode from '../nodes/VotingNode.vue'
 import SettingsModal from '../ui/SettingsModal.vue'
 import ConnectionStatus from '../ui/ConnectionStatus.vue'
 import CostDisplay from '../ui/CostDisplay.vue'
@@ -33,6 +40,13 @@ const nodeTypes = {
   'neural-condition': markRaw(ConditionalNode),
   'neural-loop': markRaw(LoopNode),
   'neural-search': markRaw(SearchNode),
+  'neural-splitter': markRaw(SplitterNode),
+  'neural-reduce': markRaw(ReduceNode),
+  'neural-self-consistency': markRaw(SelfConsistencyNode),
+  'neural-moa-proposer': markRaw(MoAProposerNode),
+  'neural-moa-aggregator': markRaw(MoAAggregatorNode),
+  'neural-debate': markRaw(DebateNode),
+  'neural-voting': markRaw(VotingNode),
 }
 
 // Initial nodes

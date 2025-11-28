@@ -76,8 +76,47 @@ function addNode(type: string, label: string) {
         <div class="w-2 h-2 rounded-full bg-neon-orange"></div>
         Web Search
     </button>
-    
-    <button @click="addNode('neural-output', 'Output')" class="w-full text-left px-4 py-2 text-xs text-slate-300 hover:bg-neon-green/20 hover:text-neon-green transition-colors flex items-center gap-2">
+
+    <div class="px-3 py-1 text-[9px] font-bold text-slate-600 uppercase tracking-widest border-t border-slate-800 bg-black/10 mt-1">
+        Advanced Reasoning
+    </div>
+
+    <button @click="addNode('neural-self-consistency', 'Self-Consistency')" class="w-full text-left px-4 py-2 text-xs text-slate-300 hover:bg-indigo-500/20 hover:text-indigo-500 transition-colors flex items-center gap-2">
+        <div class="w-2 h-2 rounded-full bg-indigo-500"></div>
+        Self-Consistency
+    </button>
+
+    <button @click="addNode('neural-moa-proposer', 'MoA Proposers')" class="w-full text-left px-4 py-2 text-xs text-slate-300 hover:bg-purple-500/20 hover:text-purple-500 transition-colors flex items-center gap-2">
+        <div class="w-2 h-2 rounded-full bg-purple-500"></div>
+        MoA Proposers
+    </button>
+
+    <button @click="addNode('neural-moa-aggregator', 'MoA Aggregator')" class="w-full text-left px-4 py-2 text-xs text-slate-300 hover:bg-pink-500/20 hover:text-pink-500 transition-colors flex items-center gap-2">
+        <div class="w-2 h-2 rounded-full bg-pink-500"></div>
+        MoA Aggregator
+    </button>
+
+    <button @click="addNode('neural-splitter', 'Splitter')" class="w-full text-left px-4 py-2 text-xs text-slate-300 hover:bg-orange-500/20 hover:text-orange-500 transition-colors flex items-center gap-2">
+        <div class="w-2 h-2 rounded-full bg-orange-500"></div>
+        Document Splitter
+    </button>
+
+    <button @click="addNode('neural-reduce', 'Reducer')" class="w-full text-left px-4 py-2 text-xs text-slate-300 hover:bg-cyan-500/20 hover:text-cyan-500 transition-colors flex items-center gap-2">
+        <div class="w-2 h-2 rounded-full bg-cyan-500"></div>
+        Reducer
+    </button>
+
+    <button @click="addNode('neural-debate', 'Debate Arena')" class="w-full text-left px-4 py-2 text-xs text-slate-300 hover:bg-red-500/20 hover:text-red-500 transition-colors flex items-center gap-2">
+        <div class="w-2 h-2 rounded-full bg-red-500"></div>
+        Debate Arena
+    </button>
+
+    <button @click="addNode('neural-voting', 'Judge & Voting')" class="w-full text-left px-4 py-2 text-xs text-slate-300 hover:bg-amber-500/20 hover:text-amber-500 transition-colors flex items-center gap-2">
+        <div class="w-2 h-2 rounded-full bg-amber-500"></div>
+        Judge & Voting
+    </button>
+
+    <button @click="addNode('neural-output', 'Output')" class="w-full text-left px-4 py-2 text-xs text-slate-300 hover:bg-neon-green/20 hover:text-neon-green transition-colors flex items-center gap-2 border-t border-slate-800 mt-1">
         <div class="w-2 h-2 rounded-full bg-neon-green"></div>
         Result Output
     </button>

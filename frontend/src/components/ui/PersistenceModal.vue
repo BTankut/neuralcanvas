@@ -146,6 +146,321 @@ const builtInTemplates = [
                 { id: "e2-5", source: "2", target: "5", sourceHandle: "done", animated: true, style: { stroke: "#10b981" } }
             ]
         }
+    },
+    {
+        id: 'template-parallel-test',
+        name: '⚡ Parallel Speed Test',
+        description: 'Tests parallel execution - 5 LLMs run simultaneously!',
+        icon: 'PhSquaresFour',
+        data: {
+            nodes: [
+                { id: "1", type: "neural-input", position: { x: 50, y: 300 }, data: { label: "Question", inputValue: "Write a haiku about artificial intelligence" } },
+                { id: "2", type: "neural-llm", position: { x: 450, y: 50 }, data: { label: "GPT-3.5 Fast", node_config: { model: "openai/gpt-3.5-turbo", temperature: 0.8, systemPrompt: "You are a poet. Write a beautiful haiku." } } },
+                { id: "3", type: "neural-llm", position: { x: 450, y: 180 }, data: { label: "GPT-4 Quality", node_config: { model: "openai/gpt-4-turbo", temperature: 0.7, systemPrompt: "You are a master poet. Write an exquisite haiku." } } },
+                { id: "4", type: "neural-llm", position: { x: 450, y: 310 }, data: { label: "Claude Creative", node_config: { model: "anthropic/claude-3.5-sonnet", temperature: 0.9, systemPrompt: "You are a creative poet. Write an innovative haiku." } } },
+                { id: "5", type: "neural-llm", position: { x: 450, y: 440 }, data: { label: "Gemini Unique", node_config: { model: "google/gemini-pro-1.5", temperature: 0.8, systemPrompt: "You are a unique poet. Write a distinctive haiku." } } },
+                { id: "6", type: "neural-llm", position: { x: 450, y: 570 }, data: { label: "Llama Budget", node_config: { model: "meta-llama/llama-3.1-70b-instruct", temperature: 0.7, systemPrompt: "You are a poetic AI. Write a haiku." } } },
+                { id: "7", type: "neural-output", position: { x: 850, y: 310 }, data: { label: "All 5 Haikus" } }
+            ],
+            edges: [
+                { id: "e1-2", source: "1", target: "2", animated: true },
+                { id: "e1-3", source: "1", target: "3", animated: true },
+                { id: "e1-4", source: "1", target: "4", animated: true },
+                { id: "e1-5", source: "1", target: "5", animated: true },
+                { id: "e1-6", source: "1", target: "6", animated: true },
+                { id: "e2-7", source: "2", target: "7", animated: true },
+                { id: "e3-7", source: "3", target: "7", animated: true },
+                { id: "e4-7", source: "4", target: "7", animated: true },
+                { id: "e5-7", source: "5", target: "7", animated: true },
+                { id: "e6-7", source: "6", target: "7", animated: true }
+            ]
+        }
+    },
+    {
+        id: 'template-diamond',
+        name: '💎 The Diamond Pattern',
+        description: 'Classic dependency test - waits for both branches to complete.',
+        icon: 'PhSquaresFour',
+        data: {
+            nodes: [
+                { id: "1", type: "neural-input", position: { x: 50, y: 200 }, data: { label: "Topic", inputValue: "The future of renewable energy" } },
+                { id: "2", type: "neural-llm", position: { x: 450, y: 50 }, data: { label: "Pros Analyst", node_config: { model: "openai/gpt-3.5-turbo", temperature: 0.5, systemPrompt: "List the TOP 3 advantages of this topic. Be concise and factual." } } },
+                { id: "3", type: "neural-llm", position: { x: 450, y: 350 }, data: { label: "Cons Analyst", node_config: { model: "openai/gpt-3.5-turbo", temperature: 0.5, systemPrompt: "List the TOP 3 disadvantages or challenges of this topic. Be concise and critical." } } },
+                { id: "4", type: "neural-llm", position: { x: 850, y: 200 }, data: { label: "Balanced Synthesizer", node_config: { model: "openai/gpt-4-turbo", temperature: 0.6, systemPrompt: "You will receive PROS and CONS for a topic. Write a balanced, nuanced analysis that acknowledges both sides. Conclude with your verdict." } } },
+                { id: "5", type: "neural-output", position: { x: 1250, y: 200 }, data: { label: "Final Analysis" } }
+            ],
+            edges: [
+                { id: "e1-2", source: "1", target: "2", animated: true },
+                { id: "e1-3", source: "1", target: "3", animated: true },
+                { id: "e2-4", source: "2", target: "4", animated: true },
+                { id: "e3-4", source: "3", target: "4", animated: true },
+                { id: "e4-5", source: "4", target: "5", animated: true }
+            ]
+        }
+    },
+    {
+        id: 'template-research',
+        name: '🔬 The Research Team',
+        description: 'Parallel research + synthesis - showcases 5 concurrent nodes.',
+        icon: 'PhSquaresFour',
+        data: {
+            nodes: [
+                { id: "1", type: "neural-input", position: { x: 50, y: 350 }, data: { label: "Research Topic", inputValue: "Quantum Computing breakthroughs in 2024" } },
+                { id: "2", type: "neural-search", position: { x: 400, y: 50 }, data: { label: "Web Search 1", node_config: { searchQuery: "" } } },
+                { id: "3", type: "neural-search", position: { x: 400, y: 200 }, data: { label: "Web Search 2", node_config: { searchQuery: "" } } },
+                { id: "4", type: "neural-llm", position: { x: 400, y: 350 }, data: { label: "Historical Context", node_config: { model: "openai/gpt-3.5-turbo", temperature: 0.3, systemPrompt: "Provide a brief history of this topic. Focus on key milestones." } } },
+                { id: "5", type: "neural-llm", position: { x: 400, y: 500 }, data: { label: "Future Predictions", node_config: { model: "openai/gpt-3.5-turbo", temperature: 0.8, systemPrompt: "Make 3 bold predictions about the future of this topic in the next 5 years." } } },
+                { id: "6", type: "neural-llm", position: { x: 400, y: 650 }, data: { label: "Expert Opinion", node_config: { model: "openai/gpt-4-turbo", temperature: 0.5, systemPrompt: "As a domain expert, provide your professional opinion on this topic. Be authoritative." } } },
+                { id: "7", type: "neural-llm", position: { x: 850, y: 350 }, data: { label: "Master Compiler", node_config: { model: "openai/gpt-4-turbo", temperature: 0.6, systemPrompt: "Compile all research inputs into a comprehensive, well-structured report. Use markdown headings and bullet points." } } },
+                { id: "8", type: "neural-output", position: { x: 1250, y: 350 }, data: { label: "Final Report" } }
+            ],
+            edges: [
+                { id: "e1-2", source: "1", target: "2", animated: true },
+                { id: "e1-3", source: "1", target: "3", animated: true },
+                { id: "e1-4", source: "1", target: "4", animated: true },
+                { id: "e1-5", source: "1", target: "5", animated: true },
+                { id: "e1-6", source: "1", target: "6", animated: true },
+                { id: "e2-7", source: "2", target: "7", animated: true },
+                { id: "e3-7", source: "3", target: "7", animated: true },
+                { id: "e4-7", source: "4", target: "7", animated: true },
+                { id: "e5-7", source: "5", target: "7", animated: true },
+                { id: "e6-7", source: "6", target: "7", animated: true },
+                { id: "e7-8", source: "7", target: "8", animated: true }
+            ]
+        }
+    },
+    {
+        id: 'template-fallback-test',
+        name: '🛡️ Fallback System Test',
+        description: 'Tests intelligent model fallback - starts with invalid model, auto-recovers!',
+        icon: 'PhSquaresFour',
+        data: {
+            nodes: [
+                { id: "1", type: "neural-input", position: { x: 50, y: 200 }, data: { label: "Prompt", inputValue: "Write a short poem about resilience" } },
+                { id: "2", type: "neural-llm", position: { x: 450, y: 200 }, data: { label: "Broken Model → Auto Fallback", node_config: { model: "invalid/fake-model-that-will-fail", temperature: 0.7, systemPrompt: "You are a poet. Write a beautiful, short poem." } } },
+                { id: "3", type: "neural-output", position: { x: 850, y: 200 }, data: { label: "Result (from fallback model)" } }
+            ],
+            edges: [
+                { id: "e1-2", source: "1", target: "2", animated: true },
+                { id: "e2-3", source: "2", target: "3", animated: true }
+            ]
+        }
+    },
+    {
+        id: 'template-mapreduce',
+        name: '📄 Document Analyzer (MapReduce)',
+        description: 'Splits long text → hierarchical AI reduction. Handles unlimited context!',
+        icon: 'PhSquaresFour',
+        data: {
+            nodes: [
+                {
+                    id: "1",
+                    type: "neural-input",
+                    position: { x: 50, y: 300 },
+                    data: {
+                        label: "Long Document",
+                        inputValue: "Artificial Intelligence has revolutionized numerous industries. In healthcare, AI systems can now diagnose diseases with accuracy rivaling human experts. Machine learning algorithms analyze medical images, patient records, and genetic data to identify patterns invisible to the human eye.\n\nIn finance, AI powers algorithmic trading, fraud detection, and personalized banking services. Natural language processing enables chatbots to handle customer service inquiries 24/7. Computer vision allows autonomous vehicles to navigate complex environments.\n\nThe education sector benefits from adaptive learning platforms that customize content to individual student needs. AI tutors provide instant feedback and identify knowledge gaps. In manufacturing, predictive maintenance systems prevent equipment failures before they occur.\n\nHowever, ethical concerns about AI bias, privacy, and job displacement remain critical challenges that society must address as the technology continues to advance at an unprecedented pace."
+                    }
+                },
+                {
+                    id: "2",
+                    type: "neural-splitter",
+                    position: { x: 450, y: 300 },
+                    data: {
+                        label: "Text Splitter",
+                        node_config: {
+                            chunk_size: 400,
+                            overlap: 50,
+                            strategy: "semantic"
+                        }
+                    }
+                },
+                {
+                    id: "3",
+                    type: "neural-reduce",
+                    position: { x: 850, y: 300 },
+                    data: {
+                        label: "Hierarchical Reducer",
+                        node_config: {
+                            strategy: "hierarchical",
+                            model: "openai/gpt-3.5-turbo",
+                            temperature: 0.4,
+                            prompt: "Summarize and synthesize the following content. Extract key insights and organize by topic."
+                        }
+                    }
+                },
+                {
+                    id: "4",
+                    type: "neural-output",
+                    position: { x: 1250, y: 300 },
+                    data: { label: "Final Summary" }
+                }
+            ],
+            edges: [
+                { id: "e1-2", source: "1", target: "2", animated: true },
+                { id: "e2-3", source: "2", target: "3", animated: true },
+                { id: "e3-4", source: "3", target: "4", animated: true }
+            ]
+        }
+    },
+    {
+        id: 'template-self-consistency',
+        name: '🎲 The Jury (Self-Consistency)',
+        description: 'Generates 5 diverse answers → majority vote. Reduces hallucinations!',
+        icon: 'PhSquaresFour',
+        data: {
+            nodes: [
+                {
+                    id: "1",
+                    type: "neural-input",
+                    position: { x: 50, y: 200 },
+                    data: {
+                        label: "Question",
+                        inputValue: "If you flip a fair coin 3 times, what is the probability of getting exactly 2 heads?"
+                    }
+                },
+                {
+                    id: "2",
+                    type: "neural-self-consistency",
+                    position: { x: 450, y: 200 },
+                    data: {
+                        label: "Jury Deliberation",
+                        node_config: {
+                            model: "openai/gpt-3.5-turbo",
+                            samples: 5,
+                            voting: "majority",
+                            temperature: 0.7
+                        }
+                    }
+                },
+                {
+                    id: "3",
+                    type: "neural-output",
+                    position: { x: 850, y: 200 },
+                    data: { label: "Consensus Answer" }
+                }
+            ],
+            edges: [
+                { id: "e1-2", source: "1", target: "2", animated: true },
+                { id: "e2-3", source: "2", target: "3", animated: true }
+            ]
+        }
+    },
+    {
+        id: 'template-moa',
+        name: '🎭 The Think Tank (MoA)',
+        description: '3 diverse AI models propose → GPT-4 synthesizes. 7.6% quality boost!',
+        icon: 'PhSquaresFour',
+        data: {
+            nodes: [
+                {
+                    id: "1",
+                    type: "neural-input",
+                    position: { x: 50, y: 200 },
+                    data: {
+                        label: "Complex Question",
+                        inputValue: "What are the most promising approaches to achieving Artificial General Intelligence (AGI) and what are the key challenges?"
+                    }
+                },
+                {
+                    id: "2",
+                    type: "neural-moa-proposer",
+                    position: { x: 450, y: 200 },
+                    data: {
+                        label: "Diverse Experts",
+                        node_config: {
+                            models: [
+                                "openai/gpt-4-turbo",
+                                "anthropic/claude-3.5-sonnet",
+                                "openai/gpt-3.5-turbo"
+                            ],
+                            temperature: 0.7
+                        }
+                    }
+                },
+                {
+                    id: "3",
+                    type: "neural-moa-aggregator",
+                    position: { x: 850, y: 200 },
+                    data: {
+                        label: "Master Synthesizer",
+                        node_config: {
+                            model: "openai/gpt-4-turbo",
+                            temperature: 0.6,
+                            strategy: "synthesis"
+                        }
+                    }
+                },
+                {
+                    id: "4",
+                    type: "neural-output",
+                    position: { x: 1250, y: 200 },
+                    data: { label: "Superior Answer" }
+                }
+            ],
+            edges: [
+                { id: "e1-2", source: "1", target: "2", animated: true },
+                { id: "e2-3", source: "2", target: "3", animated: true },
+                { id: "e3-4", source: "3", target: "4", animated: true }
+            ]
+        }
+    },
+    {
+        id: 'template-debate',
+        name: '⚔️ The Fact Checker (Debate)',
+        description: 'AI agents debate multiple rounds → GPT-4 judge delivers verdict!',
+        icon: 'PhSquaresFour',
+        data: {
+            nodes: [
+                {
+                    id: "1",
+                    type: "neural-input",
+                    position: { x: 50, y: 200 },
+                    data: {
+                        label: "Controversial Claim",
+                        inputValue: "Remote work is more productive than office work for software development teams."
+                    }
+                },
+                {
+                    id: "2",
+                    type: "neural-debate",
+                    position: { x: 450, y: 200 },
+                    data: {
+                        label: "Debate Arena",
+                        node_config: {
+                            model: "openai/gpt-3.5-turbo",
+                            debaters: 3,
+                            rounds: 2,
+                            temperature: 0.8
+                        }
+                    }
+                },
+                {
+                    id: "3",
+                    type: "neural-voting",
+                    position: { x: 850, y: 200 },
+                    data: {
+                        label: "Supreme Judge",
+                        node_config: {
+                            model: "openai/gpt-4-turbo",
+                            method: "judge",
+                            temperature: 0.5
+                        }
+                    }
+                },
+                {
+                    id: "4",
+                    type: "neural-output",
+                    position: { x: 1250, y: 200 },
+                    data: { label: "Final Verdict" }
+                }
+            ],
+            edges: [
+                { id: "e1-2", source: "1", target: "2", animated: true },
+                { id: "e2-3", source: "2", target: "3", animated: true },
+                { id: "e3-4", source: "3", target: "4", animated: true }
+            ]
+        }
     }
 ]
 

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from app.schemas.workflow import WorkflowGraph
-from app.engine.executor import WorkflowExecutor
+from app.engine.executor import WorkflowExecutor, ParallelWorkflowExecutor
 from app.core.logging import logger
 import json
 
@@ -26,8 +26,8 @@ async def websocket_endpoint(websocket: WebSocket):
                 await websocket.send_json({"type": "error", "message": f"Invalid Graph Data: {str(e)}"})
                 continue
 
-            # Execute
-            executor = WorkflowExecutor(graph, websocket)
+            # Execute with ParallelWorkflowExecutor (5 concurrent nodes)
+            executor = ParallelWorkflowExecutor(graph, websocket, max_concurrent=5)
             await executor.run()
             
     except WebSocketDisconnect:

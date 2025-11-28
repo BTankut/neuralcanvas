@@ -29,7 +29,16 @@ class Edge(BaseModel):
     targetHandle: Optional[str] = None
     animated: bool = False
 
+class ParallelConfig(BaseModel):
+    """Configuration for parallel workflow execution."""
+    enabled: bool = True
+    max_concurrent_nodes: int = 5
+    timeout_seconds: int = 300
+    enable_auto_retry: bool = True
+    max_retries: int = 3
+
 class WorkflowGraph(BaseModel):
     nodes: List[Node]
     edges: List[Edge]
     apiKey: Optional[str] = None
+    parallel_config: Optional[ParallelConfig] = Field(default_factory=ParallelConfig)

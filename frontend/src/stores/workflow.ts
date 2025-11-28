@@ -37,6 +37,31 @@ export const useWorkflowStore = defineStore('workflow', () => {
     return total
   })
 
+  // Computed: Categorized models grouped by provider
+  const categorizedModels = computed(() => {
+    const categories: Record<string, {id: string, name: string}[]> = {}
+
+    availableModels.value.forEach(model => {
+      // Extract provider from model ID (e.g., "openai/gpt-4" -> "OpenAI")
+      const parts = model.id.split('/')
+      let provider = parts[0] || 'Other'
+
+      // Capitalize first letter
+      provider = provider.charAt(0).toUpperCase() + provider.slice(1)
+
+      if (!categories[provider]) {
+        categories[provider] = []
+      }
+      categories[provider].push(model)
+    })
+
+    // Convert to array format for optgroup rendering
+    return Object.entries(categories).map(([category, models]) => ({
+      category,
+      models
+    }))
+  })
+
   function setNodes(newNodes: Node[]) {
     nodes.value = newNodes
   }
@@ -283,6 +308,7 @@ export const useWorkflowStore = defineStore('workflow', () => {
     apiKey,
     isConnected,
     availableModels,
+    categorizedModels,
     isLoadingModels,
     modelFetchError,
     totalCost,
