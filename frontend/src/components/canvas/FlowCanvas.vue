@@ -135,43 +135,39 @@ const nodeTypes = {
   'neural-voting': markRaw(VotingNode),
 }
 
-// Initial nodes
+// Initial nodes (Default: Simple Chat)
 const nodes = ref([
   {
     id: '1',
     type: 'neural-input',
-    position: { x: 50, y: 200 },
-    data: { label: 'Start', inputValue: 'Loop Test Start' }
+    position: { x: 100, y: 250 },
+    data: { label: 'User Input', inputValue: 'Hello! How does NeuralCanvas work?' }
   },
   {
     id: '2',
-    type: 'neural-loop',
-    position: { x: 400, y: 200 },
-    data: { label: 'Iterator', node_config: { max_iterations: 3 } }
+    type: 'neural-llm',
+    position: { x: 500, y: 150 },
+    data: { label: 'AI Processor' }
   },
   {
     id: '3',
-    type: 'neural-llm',
-    position: { x: 800, y: 50 },
-    data: { label: 'Looped Worker' }
-  },
-  {
-    id: '4',
     type: 'neural-output',
-    position: { x: 800, y: 350 },
-    data: { label: 'Final Result' }
+    position: { x: 900, y: 250 },
+    data: { label: 'Final Response' }
   },
 ])
 
 const edges = ref([
   { id: 'e1-2', source: '1', target: '2', animated: true },
-  // Loop Path: Loop Node -> AI Node
-  { id: 'e2-3', source: '2', target: '3', sourceHandle: 'loop', animated: true, style: { stroke: '#06b6d4' } },
-  // Loop Back: AI Node -> Loop Node (This closes the cycle)
-  { id: 'e3-2', source: '3', target: '2', animated: true, style: { stroke: '#06b6d4', strokeDasharray: '5,5' } },
-  // Done Path: Loop Node -> Output
-  { id: 'e2-4', source: '2', target: '4', sourceHandle: 'done', animated: true, style: { stroke: '#10b981' } },
+  { id: 'e2-3', source: '2', target: '3', animated: true },
 ])
+
+// Set initial template info
+store.currentTemplate = {
+    id: 'template-simple',
+    name: 'Simple Chat',
+    description: 'The most basic workflow: Input -> AI -> Output.'
+}
 
 // Sync with store
 // Watch local changes -> update store

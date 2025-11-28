@@ -1,5 +1,12 @@
 [
     {
+        "id": "template-simple",
+        "name": "Simple Chat (Start Here)",
+        "description": "The most basic workflow: Input -> AI -> Output. Perfect for beginners.",
+        "icon": "PhChatCircleText",
+        "file": "/templates/simple.json"
+    },
+    {
         "id": "template-journalist",
         "name": "The Tech Journalist",
         "description": "An automated news reporting agent. Searches web, synthesizes, and drafts an article.",
