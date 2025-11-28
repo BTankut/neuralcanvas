@@ -72,7 +72,7 @@ const currentIteration = computed(() => status.value.usage?.current_iteration ||
                     type="range" 
                     v-model.number="maxIterations" 
                     min="1" max="10" step="1"
-                    class="w-full h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-neon-cyan mb-3"
+                    class="w-full h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-neon-cyan mb-3 nodrag"
                 />
                 
                 <div>
@@ -81,7 +81,7 @@ const currentIteration = computed(() => status.value.usage?.current_iteration ||
                         type="text" 
                         v-model="targetValue"
                         placeholder="e.g. APPROVED"
-                        class="w-full bg-black/50 border border-slate-700 rounded text-xs text-slate-200 p-2 focus:border-neon-cyan outline-none font-mono"
+                        class="w-full bg-black/50 border border-slate-700 rounded text-xs text-slate-200 p-2 focus:border-neon-cyan outline-none font-mono nodrag"
                     />
                     <div class="text-[9px] text-slate-500 mt-1 italic">
                         Stops loop if input contains this text.
