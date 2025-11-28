@@ -79,7 +79,7 @@ const selectedModelName = computed(() => {
     <!-- Header -->
     <div class="node-header bg-neon-blue/20 border-b border-neon-blue/30 text-neon-blue flex justify-center items-center min-h-[40px] relative pl-6">
         <span class="font-bold text-xs tracking-wider uppercase">MoA Aggregator</span>
-        <span v-if="status.status === 'success'" class="absolute right-2 text-[9px] font-bold text-neon-green">DONE</span>
+        <span v-if="status.status === 'success'" class="absolute right-8 text-[9px] font-bold text-neon-green">DONE</span>
     </div>
 
 

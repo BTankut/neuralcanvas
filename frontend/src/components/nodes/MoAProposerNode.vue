@@ -85,7 +85,7 @@ const result = computed(() => status.value.result) // MoA Proposer results usual
     <!-- Header -->
     <div class="node-header bg-neon-purple/20 border-b border-neon-purple/30 text-neon-purple flex justify-center items-center min-h-[40px] relative pl-6">
         <span class="font-bold text-xs tracking-wider uppercase">MoA Proposers</span>
-        <span v-if="status.status === 'success'" class="absolute right-2 text-[9px] font-bold text-neon-green">COMPLETE</span>
+        <span v-if="status.status === 'success'" class="absolute right-8 text-[9px] font-bold text-neon-green">COMPLETE</span>
     </div>
 
     <div class="node-body p-3 space-y-3">

@@ -62,7 +62,7 @@ const result = computed(() => status.value.result) // Search results usually com
     <!-- Header -->
     <div class="node-header bg-cyan-500/20 border-b border-cyan-500/30 text-cyan-500 flex justify-center items-center min-h-[40px] relative pl-6">
         <span class="font-bold text-xs tracking-wider uppercase">Web Search</span>
-        <span v-if="status.status === 'success'" class="absolute right-2 text-[9px] font-bold text-neon-green">FOUND</span>
+        <span v-if="status.status === 'success'" class="absolute right-8 text-[9px] font-bold text-neon-green">FOUND</span>
     </div>
 
     <div class="node-body p-3 space-y-3">

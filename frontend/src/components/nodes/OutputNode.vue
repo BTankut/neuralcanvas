@@ -46,7 +46,7 @@ const result = computed(() => status.value.result)
         <div class="flex items-center">
             <span class="font-bold text-xs tracking-wider uppercase">Result Output</span>
         </div>
-        <span v-if="status.status === 'skipped'" class="absolute right-2 text-[9px] font-bold">SKIPPED</span>
+        <span v-if="status.status === 'skipped'" class="absolute right-8 text-[9px] font-bold">SKIPPED</span>
     </div>
     
     <div class="node-body p-3 min-h-[80px] bg-black/30 flex items-start justify-start overflow-auto max-h-60 custom-scrollbar nodrag cursor-text select-text">

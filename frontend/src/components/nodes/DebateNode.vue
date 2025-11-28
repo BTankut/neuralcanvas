@@ -76,7 +76,7 @@ const selectedModelName = computed(() => {
     <!-- Header -->
     <div class="node-header bg-neon-red/20 border-b border-neon-red/30 text-neon-red flex justify-center items-center min-h-[40px] relative pl-6">
         <span class="font-bold text-xs tracking-wider uppercase">Debate Room</span>
-        <span v-if="status.status === 'success'" class="absolute right-2 text-[9px] font-bold text-neon-green">FINISHED</span>
+        <span v-if="status.status === 'success'" class="absolute right-8 text-[9px] font-bold text-neon-green">FINISHED</span>
     </div>
 
     <div class="node-body p-3 space-y-3">

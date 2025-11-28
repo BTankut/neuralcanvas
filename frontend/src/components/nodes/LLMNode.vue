@@ -85,7 +85,7 @@ const selectedModelName = computed(() => {
                 <span class="font-bold text-xs tracking-wider uppercase">AI Processing</span>
             </div>
             <div v-if="isRunning" class="absolute right-2 w-2 h-2 bg-neon-purple rounded-full animate-ping"></div>
-            <span v-if="status.status === 'skipped'" class="absolute right-2 text-[9px] font-bold">SKIPPED</span>
+            <span v-if="status.status === 'skipped'" class="absolute right-8 text-[9px] font-bold">SKIPPED</span>
         </div>
     
         <div class="node-body p-3 space-y-3">
