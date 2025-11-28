@@ -226,12 +226,12 @@ class WorkflowExecutor:
                 for key, val in inputs.items():
                     prompt_context += f"Input from Node {key}:\n{val}\n\n"
                 
-                system_prompt = "You are a helpful AI assistant in a node-based workflow."
-                user_prompt = prompt_context
-                
                 # Get config from node data
                 model_name = node.data.node_config.get("model", "openai/gpt-3.5-turbo")
                 temperature = node.data.node_config.get("temperature", 0.7)
+                system_prompt = node.data.node_config.get("systemPrompt", "You are a helpful AI assistant in a node-based workflow.")
+                
+                user_prompt = prompt_context
                 
                 messages = [
                     {"role": "system", "content": system_prompt},
