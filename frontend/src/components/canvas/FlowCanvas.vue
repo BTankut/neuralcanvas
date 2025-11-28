@@ -22,7 +22,7 @@ import ConnectionStatus from '../ui/ConnectionStatus.vue'
 import CostDisplay from '../ui/CostDisplay.vue'
 import ContextMenu from '../ui/ContextMenu.vue'
 import PersistenceModal from '../ui/PersistenceModal.vue'
-import { PhGearSix, PhSpinner, PhFloppyDisk, PhFolderOpen, PhArrowUUpLeft, PhArrowUUpRight, PhBroom, PhArrowCounterClockwise, PhInfo } from '@phosphor-icons/vue'
+import { PhGearSix, PhSpinner, PhFloppyDisk, PhFolderOpen, PhArrowUUpLeft, PhArrowUUpRight, PhBroom, PhArrowCounterClockwise, PhProjectorScreen } from '@phosphor-icons/vue'
 import { useMagicKeys, whenever } from '@vueuse/core'
 
 import '@vue-flow/core/dist/style.css'
@@ -104,9 +104,6 @@ function resetCanvas() {
 function reloadTemplate() {
     if (store.currentTemplate && persistenceModal.value) {
         if (confirm(`Reload template "${store.currentTemplate.name}"? All changes will be lost.`)) {
-            // We need to find the template object from the registry inside PersistenceModal.
-            // Since that registry is private to that component, we can either move it to store or just trigger a reload method on the modal.
-            // Easier way: Expose a 'reload' method on PersistenceModal.
             persistenceModal.value.reload(store.currentTemplate.id)
         }
     }
@@ -212,78 +209,80 @@ onConnect((params) => addEdges(params))
     <div class="absolute top-4 right-4 z-50 flex gap-2 items-center">
         
         <!-- Template Info (Compact) -->
-        <div v-if="store.currentTemplate" class="flex items-center gap-1 bg-slate-900/80 border border-slate-700 rounded-full px-2 py-1 backdrop-blur-md mr-1 group relative">
-            <span class="text-[10px] font-bold text-neon-yellow tracking-wide truncate max-w-[100px] sm:max-w-[200px]">{{ store.currentTemplate.name }}</span>
-            <PhInfo weight="bold" class="text-slate-400 cursor-help text-xs" />
+        <div v-if="store.currentTemplate" class="flex items-center gap-1 bg-slate-900/80 border border-slate-700 rounded-full px-3 backdrop-blur-md mr-1 group relative h-10">
+            <PhProjectorScreen weight="bold" class="text-neon-yellow text-lg mr-1" />
+            <span class="text-xs font-bold text-neon-yellow tracking-wide truncate max-w-[150px] sm:max-w-[250px]">{{ store.currentTemplate.name }}</span>
             
             <!-- Tooltip -->
-            <div class="absolute top-full right-0 mt-2 w-48 p-2 bg-slate-800 border border-slate-600 rounded text-[10px] text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-xl">
+            <div class="absolute top-full right-0 mt-2 w-64 p-3 bg-slate-800 border border-slate-600 rounded-lg text-xs text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-xl leading-relaxed">
                 {{ store.currentTemplate.description }}
             </div>
 
-            <button @click="reloadTemplate" class="ml-1 p-0.5 hover:bg-slate-700 rounded-full text-slate-400 hover:text-white transition-colors" title="Reset Template">
-                <PhArrowCounterClockwise weight="bold" class="text-xs" />
+            <div class="h-4 w-px bg-slate-700 mx-1"></div>
+
+            <button @click="reloadTemplate" class="p-1 hover:bg-slate-700 rounded-full text-slate-400 hover:text-white transition-colors" title="Reset Template">
+                <PhArrowCounterClockwise weight="bold" class="text-lg" />
             </button>
         </div>
 
         <!-- Status Indicators (Compact) -->
-        <div class="flex gap-1 mr-2 border-r border-slate-700 pr-2">
+        <div class="flex gap-1 mr-2 border-r border-slate-700 pr-2 h-10 items-center">
             <ConnectionStatus />
             <CostDisplay />
         </div>
 
         <!-- Canvas Controls (Undo/Redo/Clear) -->
-        <div class="flex gap-1 mr-2 border-r border-slate-700 pr-2">
+        <div class="flex gap-1 mr-2 border-r border-slate-700 pr-2 h-10 items-center">
             <button 
                 @click="undo"
-                class="w-8 h-8 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-neon-blue transition-all backdrop-blur-md disabled:opacity-30"
+                class="w-10 h-10 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-neon-blue transition-all backdrop-blur-md disabled:opacity-30"
                 :disabled="historyIndex <= 0"
                 title="Undo (Ctrl+Z)"
             >
-                <PhArrowUUpLeft weight="bold" class="text-lg" />
+                <PhArrowUUpLeft weight="bold" class="text-2xl" />
             </button>
             <button 
                 @click="redo"
-                class="w-8 h-8 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-neon-blue transition-all backdrop-blur-md disabled:opacity-30"
+                class="w-10 h-10 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-neon-blue transition-all backdrop-blur-md disabled:opacity-30"
                 :disabled="historyIndex >= history.length - 1"
                 title="Redo (Ctrl+Y)"
             >
-                <PhArrowUUpRight weight="bold" class="text-lg" />
+                <PhArrowUUpRight weight="bold" class="text-2xl" />
             </button>
             <button 
                 @click="resetCanvas"
-                class="w-8 h-8 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-neon-red transition-all backdrop-blur-md ml-1"
+                class="w-10 h-10 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-neon-red transition-all backdrop-blur-md ml-1"
                 title="Clear Canvas"
             >
-                <PhBroom weight="bold" class="text-lg" />
+                <PhBroom weight="bold" class="text-2xl" />
             </button>
         </div>
 
         <!-- Persistence Controls (Save/Load) -->
-        <div class="flex gap-1 mr-2 border-r border-slate-700 pr-2">
+        <div class="flex gap-1 mr-2 border-r border-slate-700 pr-2 h-10 items-center">
             <button 
                 @click="persistenceModal.open('save')"
-                class="w-8 h-8 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-neon-blue transition-all backdrop-blur-md"
+                class="w-10 h-10 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-neon-blue transition-all backdrop-blur-md"
                 title="Save Workflow"
             >
-                <PhFloppyDisk weight="bold" class="text-lg" />
+                <PhFloppyDisk weight="bold" class="text-2xl" />
             </button>
             <button 
                 @click="persistenceModal.open('load')"
-                class="w-8 h-8 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-neon-green transition-all backdrop-blur-md"
+                class="w-10 h-10 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-neon-green transition-all backdrop-blur-md"
                 title="Load Workflow"
             >
-                <PhFolderOpen weight="bold" class="text-lg" />
+                <PhFolderOpen weight="bold" class="text-2xl" />
             </button>
         </div>
 
         <!-- Settings -->
         <button 
             @click="settingsModal.open()"
-            class="w-8 h-8 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-white transition-all backdrop-blur-md"
+            class="w-10 h-10 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-white transition-all backdrop-blur-md"
             title="Settings"
         >
-            <PhGearSix weight="bold" class="text-lg" />
+            <PhGearSix weight="bold" class="text-2xl" />
         </button>
     </div>
 

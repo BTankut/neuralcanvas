@@ -15,7 +15,7 @@ const builtInTemplates = [
     {
         id: 'template-journalist',
         name: 'The Tech Journalist',
-        description: 'Searches web for news and writes an article.',
+        description: 'An automated news reporting agent. It searches the web for the latest information on a topic, synthesizes key findings, and drafts a professional article. Perfect for content creators and researchers.',
         icon: 'PhNewspaper',
         data: {
             nodes: [
@@ -27,14 +27,14 @@ const builtInTemplates = [
             edges: [
                 { id: "e1-2", source: "1", target: "2", animated: true },
                 { id: "e2-3", source: "2", target: "3", animated: true },
-                { id: "e3-4", source: "3", "target": "4", "animated": true }
+                { id: "e3-4", source: "3", "target": "4", animated: true }
             ]
         }
     },
     {
         id: 'template-refiner',
         name: 'The Idea Refiner',
-        description: 'Iteratively improves an idea 3 times using a loop.',
+        description: 'A creative feedback loop that iteratively improves an initial concept. The AI acts as a consultant, refining the idea over multiple passes to enhance depth and feasibility.',
         icon: 'PhLightbulb',
         data: {
             nodes: [
@@ -54,7 +54,7 @@ const builtInTemplates = [
     {
         id: 'template-router',
         name: 'The Support Router',
-        description: 'Routes messages based on sentiment (Angry vs Happy).',
+        description: 'An intelligent routing system that analyzes the sentiment of incoming messages. It directs angry customers to an empathetic support agent and standard queries to a general assistant.',
         icon: 'PhGitFork',
         data: {
             nodes: [
@@ -76,7 +76,7 @@ const builtInTemplates = [
     {
         id: 'template-board',
         name: 'The Executive Board',
-        description: 'Orchestrates 3 specialized agents (Analyst, Creative, Finance) to solve a task.',
+        description: 'A multi-agent simulation where three specialized personas (Analyst, Creative, Finance) collaborate on a task. A final Coordinator agent synthesizes their reports into a master plan.',
         icon: 'PhSquaresFour',
         data: {
             nodes: [
@@ -101,7 +101,7 @@ const builtInTemplates = [
     {
         id: 'template-automanager',
         name: 'The Auto-Manager (Dynamic)',
-        description: 'One Manager LLM assigns personas to 3 agents on the fly.',
+        description: 'A self-organizing team where a Manager agent dynamically assigns roles to sub-agents based on the task. Demonstrates prompt chaining and autonomous delegation capabilities.',
         icon: 'PhSquaresFour',
         data: {
             nodes: [
@@ -128,7 +128,7 @@ const builtInTemplates = [
     {
         id: 'template-coder',
         name: 'The Iterative Coder (Smart Loop)',
-        description: 'Coder and Reviewer loop until the code is APPROVED.',
+        description: 'A coding workflow where a Developer agent writes code and a Reviewer agent checks it. If issues are found, the loop sends it back for correction. The cycle repeats until the code is APPROVED.',
         icon: 'PhSquaresFour',
         data: {
             nodes: [
@@ -150,16 +150,16 @@ const builtInTemplates = [
     {
         id: 'template-parallel-test',
         name: '⚡ Parallel Speed Test',
-        description: 'Tests parallel execution - 5 LLMs run simultaneously!',
+        description: 'A benchmark workflow that executes 5 different AI models simultaneously. Useful for comparing speed and creative variety across different LLMs.',
         icon: 'PhSquaresFour',
         data: {
             nodes: [
                 { id: "1", type: "neural-input", position: { x: 50, y: 450 }, data: { label: "Question", inputValue: "Write a haiku about artificial intelligence" } },
-                { id: "2", type: "neural-llm", position: { x: 500, y: 50 }, data: { label: "GPT-3.5 Fast", node_config: { model: "openai/gpt-3.5-turbo", temperature: 0.8, systemPrompt: "You are a poet. Write a beautiful haiku." } } },
-                { id: "3", type: "neural-llm", position: { x: 500, y: 250 }, data: { label: "GPT-4 Quality", node_config: { model: "openai/gpt-4-turbo", temperature: 0.7, systemPrompt: "You are a master poet. Write an exquisite haiku." } } },
-                { id: "4", type: "neural-llm", position: { x: 500, y: 450 }, data: { label: "Claude Creative", node_config: { model: "anthropic/claude-3.5-sonnet", temperature: 0.9, systemPrompt: "You are a creative poet. Write an innovative haiku." } } },
-                { id: "5", type: "neural-llm", position: { x: 500, y: 650 }, data: { label: "Gemini Unique", node_config: { model: "google/gemini-pro-1.5", temperature: 0.8, systemPrompt: "You are a unique poet. Write a distinctive haiku." } } },
-                { id: "6", type: "neural-llm", position: { x: 500, y: 850 }, data: { label: "Llama Budget", node_config: { model: "meta-llama/llama-3.1-70b-instruct", temperature: 0.7, systemPrompt: "You are a poetic AI. Write a haiku." } } },
+                { id: "2", type: "neural-llm", position: { x: 500, y: 50 }, data: { label: "Fast Model", node_config: { model: "openai/gpt-3.5-turbo", temperature: 0.8, systemPrompt: "You are a poet. Write a beautiful haiku." } } },
+                { id: "3", type: "neural-llm", position: { x: 500, y: 250 }, data: { label: "Quality Model", node_config: { model: "openai/gpt-4-turbo", temperature: 0.7, systemPrompt: "You are a master poet. Write an exquisite haiku." } } },
+                { id: "4", type: "neural-llm", position: { x: 500, y: 450 }, data: { label: "Creative Model", node_config: { model: "anthropic/claude-3.5-sonnet", temperature: 0.9, systemPrompt: "You are a creative poet. Write an innovative haiku." } } },
+                { id: "5", type: "neural-llm", position: { x: 500, y: 650 }, data: { label: "Alternative Model", node_config: { model: "google/gemini-pro-1.5", temperature: 0.8, systemPrompt: "You are a unique poet. Write a distinctive haiku." } } },
+                { id: "6", type: "neural-llm", position: { x: 500, y: 850 }, data: { label: "Open Source Model", node_config: { model: "meta-llama/llama-3.1-70b-instruct", temperature: 0.7, systemPrompt: "You are a poetic AI. Write a haiku." } } },
                 { id: "7", type: "neural-output", position: { x: 1000, y: 450 }, data: { label: "All 5 Haikus" } }
             ],
             edges: [
@@ -179,7 +179,7 @@ const builtInTemplates = [
     {
         id: 'template-diamond',
         name: '💎 The Diamond Pattern',
-        description: 'Classic dependency test - waits for both branches to complete.',
+        description: 'A structured reasoning pattern where a topic is split into Pros and Cons by two separate agents, and then synthesized by a third agent into a balanced verdict.',
         icon: 'PhSquaresFour',
         data: {
             nodes: [
@@ -201,7 +201,7 @@ const builtInTemplates = [
     {
         id: 'template-research',
         name: '🔬 The Research Team',
-        description: 'Parallel research + synthesis - showcases 5 concurrent nodes.',
+        description: 'A comprehensive research workflow. It combines web search with multiple AI perspectives (Historical, Future, Expert) to produce a deep-dive report.',
         icon: 'PhSquaresFour',
         data: {
             nodes: [
@@ -232,7 +232,7 @@ const builtInTemplates = [
     {
         id: 'template-fallback-test',
         name: '🛡️ Fallback System Test',
-        description: 'Tests intelligent model fallback - starts with invalid model, auto-recovers!',
+        description: 'Demonstrates system resilience. It purposely uses an invalid model ID to trigger the automatic fallback mechanism, ensuring workflow continuity.',
         icon: 'PhSquaresFour',
         data: {
             nodes: [
@@ -249,7 +249,7 @@ const builtInTemplates = [
     {
         id: 'template-mapreduce',
         name: '📄 Document Analyzer (MapReduce)',
-        description: 'Splits long text → hierarchical AI reduction. Handles unlimited context!',
+        description: 'A powerful method for processing large documents. The text is split into chunks, processed in parallel, and then summarized hierarchically to fit context windows.',
         icon: 'PhSquaresFour',
         data: {
             nodes: [
@@ -306,7 +306,7 @@ const builtInTemplates = [
     {
         id: 'template-self-consistency',
         name: '🎲 The Jury (Self-Consistency)',
-        description: 'Generates 5 diverse answers → majority vote. Reduces hallucinations!',
+        description: 'Enhances reliability by generating multiple answers to the same prompt and selecting the most consistent one via majority vote. Ideal for logic and math.',
         icon: 'PhSquaresFour',
         data: {
             nodes: [
@@ -349,7 +349,7 @@ const builtInTemplates = [
     {
         id: 'template-moa',
         name: '🎭 The Think Tank (MoA)',
-        description: '3 diverse AI models propose → GPT-4 synthesizes. 7.6% quality boost!',
+        description: 'Uses "Mixture-of-Agents" architecture. Several diverse models propose answers, and an aggregator model synthesizes them into a superior final response.',
         icon: 'PhSquaresFour',
         data: {
             nodes: [
@@ -408,7 +408,7 @@ const builtInTemplates = [
     {
         id: 'template-debate',
         name: '⚔️ The Fact Checker (Debate)',
-        description: 'AI agents debate multiple rounds → GPT-4 judge delivers verdict!',
+        description: 'Simulates a multi-round debate between opposing AI viewpoints. A Judge agent evaluates the arguments and declares a winner based on logic and evidence.',
         icon: 'PhSquaresFour',
         data: {
             nodes: [
@@ -465,7 +465,7 @@ const builtInTemplates = [
     {
         id: 'template-moa-vs-debate',
         name: '⚔️ The Ultimate Battle: MoA vs Debate',
-        description: 'A face-off between Mixture-of-Agents and Multi-Agent Debate on a complex topic.',
+        description: 'A grand showcase comparing two advanced methodologies side-by-side. One path uses Mixture-of-Agents to synthesize an answer, while the other uses a Debate. A final Arbiter compares the results.',
         icon: 'PhSquaresFour',
         data: {
             nodes: [
@@ -675,9 +675,9 @@ defineExpose({ open, reload })
                         <div class="font-bold text-neon-yellow text-sm flex items-center gap-2">
                             {{ tpl.name }}
                         </div>
-                        <div class="text-[10px] text-slate-400 mt-1">{{ tpl.description }}</div>
+                        <div class="text-[10px] text-slate-400 mt-1 leading-snug">{{ tpl.description }}</div>
                     </div>
-                    <button class="px-3 py-1 bg-neon-yellow/10 border border-neon-yellow/50 text-neon-yellow rounded text-xs group-hover:bg-neon-yellow group-hover:text-black transition-colors">
+                    <button class="px-3 py-1 bg-neon-yellow/10 border border-neon-yellow/50 text-neon-yellow rounded text-xs group-hover:bg-neon-yellow group-hover:text-black transition-colors whitespace-nowrap">
                         USE
                     </button>
                 </div>
