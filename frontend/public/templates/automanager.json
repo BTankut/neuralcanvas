@@ -1,0 +1,100 @@
+{
+  "id": "template-auto-manager",
+  "name": "The Auto-Manager (Dynamic Roles)",
+  "description": "One LLM dynamically assigns roles to 3 sub-agents based on your task.",
+  "icon": "PhRobot",
+  "data": {
+    "nodes": [
+      {
+        "id": "1",
+        "type": "neural-input",
+        "position": { "x": 50, "y": 300 },
+        "data": {
+          "label": "Mission Objective",
+          "inputValue": "Create a plot for a sci-fi movie set in Istanbul in the year 2099."
+        }
+      },
+      {
+        "id": "2",
+        "type": "neural-llm",
+        "position": { "x": 450, "y": 300 },
+        "data": {
+          "label": "The Manager",
+          "node_config": {
+            "model": "openai/gpt-4-turbo",
+            "temperature": 0.7,
+            "systemPrompt": "You are an autonomous Project Manager. You have 3 specialized AI agents at your disposal: AGENT_A, AGENT_B, and AGENT_C. \n\nAnalyze the user's input task. Break it down into 3 distinct components. Assign a specific Persona/Role and a Task to each agent.\n\nCRITICAL: You must output the instructions in this exact format so they can understand you:\n\n[[AGENT_A]]\n[Role Name]\n[Specific Instructions]\n\n[[AGENT_B]]\n[Role Name]\n[Specific Instructions]\n\n[[AGENT_C]]\n[Role Name]\n[Specific Instructions]"
+          }
+        }
+      },
+      {
+        "id": "3",
+        "type": "neural-llm",
+        "position": { "x": 900, "y": 50 },
+        "data": {
+          "label": "Agent A",
+          "node_config": {
+            "model": "openai/gpt-3.5-turbo",
+            "temperature": 0.7,
+            "systemPrompt": "You are AGENT_A. Look at the input text provided by 'The Manager'. \nIgnore instructions for other agents. \nFind the section starting with [[AGENT_A]]. \nAdopt the Persona assigned to you in that section and execute the specific Task described there with high quality."
+          }
+        }
+      },
+      {
+        "id": "4",
+        "type": "neural-llm",
+        "position": { "x": 900, "y": 300 },
+        "data": {
+          "label": "Agent B",
+          "node_config": {
+            "model": "openai/gpt-3.5-turbo",
+            "temperature": 0.7,
+            "systemPrompt": "You are AGENT_B. Look at the input text provided by 'The Manager'. \nIgnore instructions for other agents. \nFind the section starting with [[AGENT_B]]. \nAdopt the Persona assigned to you in that section and execute the specific Task described there with high quality."
+          }
+        }
+      },
+      {
+        "id": "5",
+        "type": "neural-llm",
+        "position": { "x": 900, "y": 550 },
+        "data": {
+          "label": "Agent C",
+          "node_config": {
+            "model": "openai/gpt-3.5-turbo",
+            "temperature": 0.7,
+            "systemPrompt": "You are AGENT_C. Look at the input text provided by 'The Manager'. \nIgnore instructions for other agents. \nFind the section starting with [[AGENT_C]]. \nAdopt the Persona assigned to you in that section and execute the specific Task described there with high quality."
+          }
+        }
+      },
+      {
+        "id": "6",
+        "type": "neural-llm",
+        "position": { "x": 1350, "y": 300 },
+        "data": {
+          "label": "Final Compiler",
+          "node_config": {
+            "model": "openai/gpt-4-turbo",
+            "temperature": 0.5,
+            "systemPrompt": "You are the Final Editor. You will receive outputs from 3 different agents (A, B, C) who performed parts of a larger task. \n\nCombine their works into a single, cohesive, polished final result. Ensure consistency in tone and style."
+          }
+        }
+      },
+      {
+        "id": "7",
+        "type": "neural-output",
+        "position": { "x": 1700, "y": 300 },
+        "data": { "label": "Final Product" }
+      }
+    ],
+    "edges": [
+      { "id": "e1-2", "source": "1", "target": "2", "animated": true },
+      { "id": "e2-3", "source": "2", "target": "3", "animated": true, "style": { "stroke": "#f472b6" } },
+      { "id": "e2-4", "source": "2", "target": "4", "animated": true, "style": { "stroke": "#f472b6" } },
+      { "id": "e2-5", "source": "2", "target": "5", "animated": true, "style": { "stroke": "#f472b6" } },
+      { "id": "e3-6", "source": "3", "target": "6", "animated": true },
+      { "id": "e4-6", "source": "4", "target": "6", "animated": true },
+      { "id": "e5-6", "source": "5", "target": "6", "animated": true },
+      { "id": "e6-7", "source": "6", "target": "7", "animated": true }
+    ]
+  }
+}
