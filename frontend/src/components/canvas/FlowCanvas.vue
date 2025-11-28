@@ -22,7 +22,7 @@ import ConnectionStatus from '../ui/ConnectionStatus.vue'
 import CostDisplay from '../ui/CostDisplay.vue'
 import ContextMenu from '../ui/ContextMenu.vue'
 import PersistenceModal from '../ui/PersistenceModal.vue'
-import { PhGearSix, PhSpinner, PhFloppyDisk, PhFolderOpen, PhTrash, PhArrowUUpLeft, PhArrowUUpRight } from '@phosphor-icons/vue'
+import { PhGearSix, PhSpinner, PhFloppyDisk, PhFolderOpen, PhArrowUUpLeft, PhArrowUUpRight, PhBroom, PhArrowCounterClockwise, PhInfo } from '@phosphor-icons/vue'
 import { useMagicKeys, whenever } from '@vueuse/core'
 
 import '@vue-flow/core/dist/style.css'
@@ -96,7 +96,19 @@ function resetCanvas() {
     if (confirm('Are you sure you want to clear the entire canvas?')) {
         nodes.value = []
         edges.value = []
+        store.currentTemplate = null // Reset template info
         saveState()
+    }
+}
+
+function reloadTemplate() {
+    if (store.currentTemplate && persistenceModal.value) {
+        if (confirm(`Reload template "${store.currentTemplate.name}"? All changes will be lost.`)) {
+            // We need to find the template object from the registry inside PersistenceModal.
+            // Since that registry is private to that component, we can either move it to store or just trigger a reload method on the modal.
+            // Easier way: Expose a 'reload' method on PersistenceModal.
+            persistenceModal.value.reload(store.currentTemplate.id)
+        }
     }
 }
 
@@ -199,28 +211,26 @@ onConnect((params) => addEdges(params))
     <!-- Header Toolbar -->
     <div class="absolute top-4 right-4 z-50 flex gap-3 items-center">
         
+        <!-- Template Info (if loaded) -->
+        <div v-if="store.currentTemplate" class="flex items-center gap-2 bg-slate-900/80 border border-slate-700 rounded-full px-3 py-1.5 backdrop-blur-md mr-2 group relative">
+            <span class="text-xs font-bold text-neon-yellow tracking-wide">{{ store.currentTemplate.name }}</span>
+            <PhInfo weight="bold" class="text-slate-400 cursor-help" />
+            
+            <!-- Tooltip -->
+            <div class="absolute top-full right-0 mt-2 w-48 p-2 bg-slate-800 border border-slate-600 rounded text-[10px] text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-xl">
+                {{ store.currentTemplate.description }}
+            </div>
+
+            <!-- Reload Template -->
+            <button @click="reloadTemplate" class="ml-2 p-1 hover:bg-slate-700 rounded-full text-slate-400 hover:text-white transition-colors" title="Reset Template">
+                <PhArrowCounterClockwise weight="bold" />
+            </button>
+        </div>
+
         <!-- Status Indicators -->
         <div class="flex gap-2 mr-4 border-r border-slate-700 pr-4">
             <ConnectionStatus />
             <CostDisplay />
-        </div>
-
-        <!-- Persistence Controls -->
-        <div class="flex gap-1 mr-4 border-r border-slate-700 pr-4">
-            <button 
-                @click="persistenceModal.open('save')"
-                class="w-10 h-10 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-neon-blue transition-all backdrop-blur-md"
-                title="Save Workflow"
-            >
-                <PhFloppyDisk weight="bold" class="text-xl" />
-            </button>
-            <button 
-                @click="persistenceModal.open('load')"
-                class="w-10 h-10 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-neon-green transition-all backdrop-blur-md"
-                title="Load Workflow"
-            >
-                <PhFolderOpen weight="bold" class="text-xl" />
-            </button>
         </div>
 
         <!-- Main Controls -->
@@ -246,7 +256,25 @@ onConnect((params) => addEdges(params))
                 class="w-10 h-10 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-neon-red transition-all backdrop-blur-md ml-2"
                 title="Clear Canvas"
             >
-                <PhTrash weight="bold" class="text-xl" />
+                <PhBroom weight="bold" class="text-xl" />
+            </button>
+        </div>
+
+        <!-- Persistence Controls -->
+        <div class="flex gap-1 mr-4 border-r border-slate-700 pr-4">
+            <button 
+                @click="persistenceModal.open('save')"
+                class="w-10 h-10 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-neon-blue transition-all backdrop-blur-md"
+                title="Save Workflow"
+            >
+                <PhFloppyDisk weight="bold" class="text-xl" />
+            </button>
+            <button 
+                @click="persistenceModal.open('load')"
+                class="w-10 h-10 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-neon-green transition-all backdrop-blur-md"
+                title="Load Workflow"
+            >
+                <PhFolderOpen weight="bold" class="text-xl" />
             </button>
         </div>
 

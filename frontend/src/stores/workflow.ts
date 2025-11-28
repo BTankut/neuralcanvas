@@ -25,6 +25,9 @@ export const useWorkflowStore = defineStore('workflow', () => {
   const availableModels = ref<{id: string, name: string}[]>([])
   const isLoadingModels = ref(false)
   const modelFetchError = ref<string | null>(null)
+  
+  // Tracks the currently loaded template (if any)
+  const currentTemplate = ref<{ id: string, name: string, description: string } | null>(null)
 
   // Computed: Total Cost of current session/graph
   const totalCost = computed(() => {
@@ -312,6 +315,7 @@ export const useWorkflowStore = defineStore('workflow', () => {
     categorizedModels,
     isLoadingModels,
     modelFetchError,
+    currentTemplate,
     totalCost,
     setNodes,
     setEdges,

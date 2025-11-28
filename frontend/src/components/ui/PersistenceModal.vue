@@ -544,6 +544,13 @@ function handleLoadTemplate(template: any) {
             store.nodeStatus = {}
             store.isExecuting = false
             
+            // Set current template info
+            store.currentTemplate = {
+                id: template.id,
+                name: template.name,
+                description: template.description
+            }
+            
             isOpen.value = false
         } catch (e) {
             console.error(e)
@@ -559,7 +566,25 @@ function handleDelete(id: string) {
     }
 }
 
-defineExpose({ open })
+function reload(templateId: string) {
+    const tpl = builtInTemplates.find(t => t.id === templateId)
+    if (tpl) {
+        try {
+            const flow = tpl.data
+            const nodes = JSON.parse(JSON.stringify(flow.nodes))
+            const edges = JSON.parse(JSON.stringify(flow.edges))
+
+            store.setNodes(nodes)
+            store.setEdges(edges)
+            store.nodeStatus = {}
+            store.isExecuting = false
+        } catch (e) {
+            console.error(e)
+        }
+    }
+}
+
+defineExpose({ open, reload })
 </script>
 
 <template>
