@@ -112,8 +112,16 @@ onConnect((params) => addEdges(params))
 <template>
   <div class="h-full w-full bg-void text-slate-200 relative">
     
-    <!-- Floating Action Button for Run -->
-    <div class="absolute top-4 right-4 z-50 flex gap-3">
+    <!-- Header Toolbar -->
+    <div class="absolute top-4 right-4 z-50 flex gap-3 items-center">
+        
+        <!-- Status Indicators -->
+        <div class="flex gap-2 mr-4 border-r border-slate-700 pr-4">
+            <ConnectionStatus />
+            <CostDisplay />
+        </div>
+
+        <!-- Persistence Controls -->
         <div class="flex gap-1 mr-4 border-r border-slate-700 pr-4">
             <button 
                 @click="persistenceModal.open('save')"
@@ -131,6 +139,7 @@ onConnect((params) => addEdges(params))
             </button>
         </div>
 
+        <!-- Main Controls -->
         <button 
             @click="settingsModal.open()"
             class="w-10 h-10 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-white transition-all backdrop-blur-md"
@@ -152,8 +161,6 @@ onConnect((params) => addEdges(params))
 
     <SettingsModal ref="settingsModal" />
     <PersistenceModal ref="persistenceModal" />
-    <ConnectionStatus />
-    <CostDisplay />
     
     <VueFlow
       v-model="nodes"
