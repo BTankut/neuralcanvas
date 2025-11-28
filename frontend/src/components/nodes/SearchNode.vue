@@ -3,6 +3,7 @@ import { Handle, Position, useNode, useNodeId } from '@vue-flow/core'
 import { ref, watch, computed, onMounted, onUnmounted } from 'vue'
 import { useWorkflowStore } from '../../stores/workflow'
 import { PhArrowsOutSimple, PhX } from '@phosphor-icons/vue'
+import ModelSelector from '../ui/ModelSelector.vue'
 
 const { node } = useNode()
 const nodeId = useNodeId()
@@ -21,24 +22,29 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeydown))
 
 // Configuration
 const searchQuery = ref(node.data?.node_config?.searchQuery || '')
+// Default to Gemini Flash for speed and quality
+const model = ref(node.data?.node_config?.model || 'google/gemini-2.0-flash-exp:free')
 
 // Sync changes back to node data
-watch(searchQuery, (newQuery) => {
+watch([searchQuery, model], ([newQuery, newModel]) => {
     node.data = {
         ...node.data,
         node_config: {
             ...node.data?.node_config,
-            searchQuery: newQuery
+            searchQuery: newQuery,
+            model: newModel
         }
     }
 })
 
 // Sync node data -> local state
 watch(() => node.data?.node_config?.searchQuery, (newVal) => { if (newVal !== undefined && newVal !== searchQuery.value) searchQuery.value = newVal })
+watch(() => node.data?.node_config?.model, (newVal) => { if (newVal !== undefined && newVal !== model.value) model.value = newVal })
 
 const status = computed(() => store.nodeStatus[nodeId] || { status: 'idle' } as any)
 const isRunning = computed(() => status.value.status === 'running')
-const result = computed(() => status.value.result) // Search results usually come as final result, not stream
+const result = computed(() => status.value.result)
+const streamText = computed(() => status.value.stream || '') // Add stream support
 </script>
 
 <template>
@@ -55,7 +61,7 @@ const result = computed(() => status.value.result) // Search results usually com
     </div>
 
     <!-- Expand Button -->
-    <button @click="isExpanded = true" class="absolute top-2 right-2 text-slate-500 hover:text-cyan-500 transition-colors z-30">
+    <button v-if="result || streamText" @click="isExpanded = true" class="absolute top-2 right-2 text-slate-500 hover:text-cyan-500 transition-colors z-30">
         <PhArrowsOutSimple weight="bold" />
     </button>
 
@@ -66,21 +72,34 @@ const result = computed(() => status.value.result) // Search results usually com
     </div>
 
     <div class="node-body p-3 space-y-3">
-        <!-- Result Preview -->
-        <div v-if="result" class="bg-black/50 border border-cyan-500/50 rounded h-24 overflow-hidden relative group/preview">
-            <div class="absolute top-0 left-0 bg-cyan-500/20 text-cyan-500 text-[9px] font-bold px-1">RESULTS</div>
-            <div class="p-2 text-[10px] font-mono text-slate-300 pt-4">
-                {{ (typeof result === 'string' ? result : JSON.stringify(result, null, 2)).substring(0, 150) }}...
+        <!-- Result Preview (Stream or Final) -->
+        <div v-if="result || streamText" class="bg-black/50 border border-cyan-500/50 rounded h-40 overflow-hidden relative group/preview flex flex-col">
+            <div class="absolute top-0 left-0 bg-cyan-500/20 text-cyan-500 text-[9px] font-bold px-1 w-full border-b border-cyan-500/20">
+                RESULTS ({{ model.split('/').pop() }})
+            </div>
+            <div class="p-2 text-[10px] font-mono text-slate-300 pt-5 h-full overflow-y-auto custom-scrollbar">
+                <span v-if="streamText">{{ streamText }}<span v-if="isRunning" class="animate-pulse text-cyan-500">_</span></span>
+                <span v-else>{{ typeof result === 'string' ? result : JSON.stringify(result, null, 2) }}</span>
             </div>
         </div>
 
         <!-- Configuration -->
         <div v-else class="space-y-3">
             <div>
+                <label class="text-[10px] text-slate-400 mb-1 block uppercase">Summarizer Model</label>
+                <ModelSelector
+                    v-model="model"
+                    :options="store.categorizedModels"
+                    :loading="store.isLoadingModels"
+                />
+                <span class="text-[9px] text-slate-500">Used to process and summarize search results</span>
+            </div>
+
+            <div>
                 <label class="text-[10px] text-slate-400 mb-1 block uppercase">Search Query</label>
                 <textarea
                     v-model="searchQuery"
-                    class="w-full bg-black/50 border border-slate-700 rounded text-xs text-slate-200 p-2 focus:border-cyan-500 outline-none resize-none h-16 font-mono"
+                    class="w-full bg-black/50 border border-slate-700 rounded text-xs text-slate-200 p-2 focus:border-cyan-500 outline-none resize-none h-16 font-mono nodrag"
                     placeholder="Leave empty to use input from previous node..."
                 ></textarea>
             </div>
@@ -101,7 +120,7 @@ const result = computed(() => status.value.result) // Search results usually com
                     </button>
                 </div>
                 <div class="w-full h-full bg-black/50 text-slate-200 p-6 overflow-y-auto custom-scrollbar font-mono text-sm leading-relaxed whitespace-pre-wrap">
-                    {{ result ? (typeof result === 'string' ? result : JSON.stringify(result, null, 2)) : 'No search results yet.' }}
+                    {{ streamText || (result ? (typeof result === 'string' ? result : JSON.stringify(result, null, 2)) : 'No search results yet.') }}
                 </div>
                 <div class="p-2 bg-slate-800/50 text-center text-[10px] text-slate-500">
                     Press ESC to close

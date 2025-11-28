@@ -189,35 +189,79 @@ class WorkflowExecutor:
                 await asyncio.sleep(0.1) 
 
             elif node.type == 'neural-search':
-                # WEB SEARCH LOGIC
+                # WEB SEARCH LOGIC (Enhanced with LLM Summarization)
                 from duckduckgo_search import DDGS
                 
-                # Determine query: Config overrides Input
+                # Determine query
                 query = node.data.node_config.get("searchQuery", "")
                 if not query:
-                    # Use input text if config is empty
                     query = "\n".join([str(val) for val in inputs.values()])
+                
+                # Determine model for summarization
+                model_name = node.data.node_config.get("model", "google/gemini-2.0-flash-exp:free")
                 
                 if not query:
                     result = "No search query provided."
                 else:
                     logger.info(f"Searching web for: {query}")
                     try:
-                        # Run synchronous DDGS in a thread to avoid blocking async loop
+                        # 1. Perform Raw Search (Synchronous in thread)
                         def perform_search(q):
                             with DDGS() as ddgs:
-                                return list(ddgs.text(q, max_results=3))
+                                return list(ddgs.text(q, max_results=5))
                         
                         loop = asyncio.get_event_loop()
-                        results = await loop.run_in_executor(None, perform_search, query)
+                        search_results = await loop.run_in_executor(None, perform_search, query)
                         
-                        # Format results
-                        formatted = []
-                        for r in results:
-                            formatted.append(f"Title: {r['title']}\nURL: {r['href']}\nSnippet: {r['body']}")
-                        
-                        result = "\n---\n".join(formatted) if formatted else "No results found."
-                        
+                        if not search_results:
+                            result = "No results found."
+                        else:
+                            # 2. Format Raw Results
+                            raw_context = ""
+                            for i, r in enumerate(search_results, 1):
+                                raw_context += f"Result {i}:\nTitle: {r['title']}\nURL: {r['href']}\nContent: {r['body']}\n\n"
+                            
+                            # 3. Use LLM to Summarize/Synthesize
+                            logger.info(f"Summarizing search results with {model_name}")
+                            
+                            system_prompt = """You are an advanced Web Search Agent.
+Your goal is to synthesize raw search results into a clear, comprehensive, and citation-rich answer.
+Ignore irrelevant results. Focus on answering the user's query accurately based ONLY on the provided search results.
+Format your response in Markdown with bullet points and links."""
+
+                            user_prompt = f"""User Query: {query}
+
+Raw Search Results:
+{raw_context}
+
+Please provide a detailed summary and answer to the query based on these results."""
+
+                            llm = LLMService(api_key=self.api_key)
+                            messages = [
+                                {"role": "system", "content": system_prompt},
+                                {"role": "user", "content": user_prompt}
+                            ]
+                            
+                            final_text = ""
+                            # Stream the summary
+                            async for response in llm.stream_completion_with_fallback(
+                                messages=messages,
+                                model=model_name,
+                                temperature=0.5,
+                                max_retries=3,
+                                websocket=self.websocket,
+                                node_id=node.id
+                            ):
+                                chunk = response.get("chunk", "")
+                                final_text += chunk
+                                
+                                # Stream token to UI (Search Node usually shows final result, but streaming is cool if supported)
+                                # Note: SearchNode currently displays 'result' computed property, 
+                                # so we might need to adapt UI to show stream if we want real-time effect.
+                                # For now, we just collect it.
+                            
+                            result = final_text
+
                     except Exception as search_err:
                         logger.error(f"Search failed: {search_err}")
                         result = f"Search Error: {str(search_err)}"
