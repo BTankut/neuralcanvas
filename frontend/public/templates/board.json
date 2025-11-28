@@ -1,0 +1,19 @@
+{
+    "nodes": [
+        { "id": "1", "type": "neural-input", "position": { "x": 50, "y": 300 }, "data": { "label": "Task", "inputValue": "Launch a Cyberpunk Energy Drink targeting gamers." } },
+        { "id": "2", "type": "neural-llm", "position": { "x": 500, "y": 50 }, "data": { "label": "The Analyst", "node_config": { "model": "openai/gpt-3.5-turbo", "temperature": 0.3, "systemPrompt": "You are a Strategic Analyst. Identify potential risks, market competitors, and SWOT analysis for the given task. Be critical and factual." } } },
+        { "id": "3", "type": "neural-llm", "position": { "x": 500, "y": 300 }, "data": { "label": "The Creative", "node_config": { "model": "openai/gpt-3.5-turbo", "temperature": 0.9, "systemPrompt": "You are a Creative Director. Brainstorm 3 catchy slogans, a visual identity concept, and a viral marketing stunt for the task. Be wild and innovative." } } },
+        { "id": "4", "type": "neural-llm", "position": { "x": 500, "y": 550 }, "data": { "label": "The CFO", "node_config": { "model": "openai/gpt-3.5-turbo", "temperature": 0.2, "systemPrompt": "You are a strict CFO. Estimate a rough budget breakdown for a launch campaign. Focus on ROI and cost-cutting measures." } } },
+        { "id": "5", "type": "neural-llm", "position": { "x": 1000, "y": 300 }, "data": { "label": "The CEO (Boss)", "node_config": { "model": "openai/gpt-4-turbo", "temperature": 0.5, "systemPrompt": "You are the CEO. Review the reports from your Analyst, Creative Director, and CFO below. Synthesize them into a final, actionable Go-To-Market strategy. Resolve any conflicts between creativity and budget." } } },
+        { "id": "6", "type": "neural-output", "position": { "x": 1400, "y": 300 }, "data": { "label": "Master Plan" } }
+    ],
+    "edges": [
+        { "id": "e1-2", "source": "1", "target": "2", "animated": true },
+        { "id": "e1-3", "source": "1", "target": "3", "animated": true },
+        { "id": "e1-4", "source": "1", "target": "4", "animated": true },
+        { "id": "e2-5", "source": "2", "target": "5", "animated": true },
+        { "id": "e3-5", "source": "3", "target": "5", "animated": true },
+        { "id": "e4-5", "source": "4", "target": "5", "animated": true },
+        { "id": "e5-6", "source": "5", "target": "6", "animated": true }
+    ]
+}

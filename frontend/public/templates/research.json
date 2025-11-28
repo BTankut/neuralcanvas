@@ -1,0 +1,25 @@
+{
+    "nodes": [
+        { "id": "1", "type": "neural-input", "position": { "x": 50, "y": 350 }, "data": { "label": "Research Topic", "inputValue": "Quantum Computing breakthroughs in 2024" } },
+        { "id": "2", "type": "neural-search", "position": { "x": 400, "y": 50 }, "data": { "label": "Web Search 1", "node_config": { "searchQuery": "" } } },
+        { "id": "3", "type": "neural-search", "position": { "x": 400, "y": 200 }, "data": { "label": "Web Search 2", "node_config": { "searchQuery": "" } } },
+        { "id": "4", "type": "neural-llm", "position": { "x": 400, "y": 350 }, "data": { "label": "Historical Context", "node_config": { "model": "openai/gpt-3.5-turbo", "temperature": 0.3, "systemPrompt": "Provide a brief history of this topic. Focus on key milestones." } } },
+        { "id": "5", "type": "neural-llm", "position": { "x": 400, "y": 500 }, "data": { "label": "Future Predictions", "node_config": { "model": "openai/gpt-3.5-turbo", "temperature": 0.8, "systemPrompt": "Make 3 bold predictions about the future of this topic in the next 5 years." } } },
+        { "id": "6", "type": "neural-llm", "position": { "x": 400, "y": 650 }, "data": { "label": "Expert Opinion", "node_config": { "model": "openai/gpt-4-turbo", "temperature": 0.5, "systemPrompt": "As a domain expert, provide your professional opinion on this topic. Be authoritative." } } },
+        { "id": "7", "type": "neural-llm", "position": { "x": 850, "y": 350 }, "data": { "label": "Master Compiler", "node_config": { "model": "openai/gpt-4-turbo", "temperature": 0.6, "systemPrompt": "Compile all research inputs into a comprehensive, well-structured report. Use markdown headings and bullet points." } } },
+        { "id": "8", "type": "neural-output", "position": { "x": 1250, "y": 350 }, "data": { "label": "Final Report" } }
+    ],
+    "edges": [
+        { "id": "e1-2", "source": "1", "target": "2", "animated": true },
+        { "id": "e1-3", "source": "1", "target": "3", "animated": true },
+        { "id": "e1-4", "source": "1", "target": "4", "animated": true },
+        { "id": "e1-5", "source": "1", "target": "5", "animated": true },
+        { "id": "e1-6", "source": "1", "target": "6", "animated": true },
+        { "id": "e2-7", "source": "2", "target": "7", "animated": true },
+        { "id": "e3-7", "source": "3", "target": "7", "animated": true },
+        { "id": "e4-7", "source": "4", "target": "7", "animated": true },
+        { "id": "e5-7", "source": "5", "target": "7", "animated": true },
+        { "id": "e6-7", "source": "6", "target": "7", "animated": true },
+        { "id": "e7-8", "source": "7", "target": "8", "animated": true }
+    ]
+}

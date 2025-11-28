@@ -1,0 +1,51 @@
+{
+    "nodes": [
+        {
+            "id": "1",
+            "type": "neural-input",
+            "position": { "x": 50, "y": 200 },
+            "data": {
+                "label": "Controversial Claim",
+                "inputValue": "Remote work is more productive than office work for software development teams."
+            }
+        },
+        {
+            "id": "2",
+            "type": "neural-debate",
+            "position": { "x": 450, "y": 200 },
+            "data": {
+                "label": "Debate Arena",
+                "node_config": {
+                    "model": "openai/gpt-3.5-turbo",
+                    "debaters": 3,
+                    "rounds": 2,
+                    "temperature": 0.8
+                }
+            }
+        },
+        {
+            "id": "3",
+            "type": "neural-voting",
+            "position": { "x": 850, "y": 200 },
+            "data": {
+                "label": "Supreme Judge",
+                "node_config": {
+                    "model": "openai/gpt-4-turbo",
+                    "method": "judge",
+                    "temperature": 0.5
+                }
+            }
+        },
+        {
+            "id": "4",
+            "type": "neural-output",
+            "position": { "x": 1250, "y": 200 },
+            "data": { "label": "Final Verdict" }
+        }
+    ],
+    "edges": [
+        { "id": "e1-2", "source": "1", "target": "2", "animated": true },
+        { "id": "e2-3", "source": "2", "target": "3", "animated": true },
+        { "id": "e3-4", "source": "3", "target": "4", "animated": true }
+    ]
+}

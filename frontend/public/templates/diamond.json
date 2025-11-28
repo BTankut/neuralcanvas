@@ -1,0 +1,16 @@
+{
+    "nodes": [
+        { "id": "1", "type": "neural-input", "position": { "x": 50, "y": 200 }, "data": { "label": "Topic", "inputValue": "The future of renewable energy" } },
+        { "id": "2", "type": "neural-llm", "position": { "x": 450, "y": 50 }, "data": { "label": "Pros Analyst", "node_config": { "model": "openai/gpt-3.5-turbo", "temperature": 0.5, "systemPrompt": "List the TOP 3 advantages of this topic. Be concise and factual." } } },
+        { "id": "3", "type": "neural-llm", "position": { "x": 450, "y": 350 }, "data": { "label": "Cons Analyst", "node_config": { "model": "openai/gpt-3.5-turbo", "temperature": 0.5, "systemPrompt": "List the TOP 3 disadvantages or challenges of this topic. Be concise and critical." } } },
+        { "id": "4", "type": "neural-llm", "position": { "x": 850, "y": 200 }, "data": { "label": "Balanced Synthesizer", "node_config": { "model": "openai/gpt-4-turbo", "temperature": 0.6, "systemPrompt": "You will receive PROS and CONS for a topic. Write a balanced, nuanced analysis that acknowledges both sides. Conclude with your verdict." } } },
+        { "id": "5", "type": "neural-output", "position": { "x": 1250, "y": 200 }, "data": { "label": "Final Analysis" } }
+    ],
+    "edges": [
+        { "id": "e1-2", "source": "1", "target": "2", "animated": true },
+        { "id": "e1-3", "source": "1", "target": "3", "animated": true },
+        { "id": "e2-4", "source": "2", "target": "4", "animated": true },
+        { "id": "e3-4", "source": "3", "target": "4", "animated": true },
+        { "id": "e4-5", "source": "4", "target": "5", "animated": true }
+    ]
+}

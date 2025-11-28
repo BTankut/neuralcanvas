@@ -1,47 +1,14 @@
 {
-  "id": "template-refiner",
-  "name": "The Idea Refiner",
-  "description": "Takes a rough idea and iteratively improves it 3 times using AI.",
-  "nodes": [
-    {
-      "id": "1",
-      "type": "neural-input",
-      "position": { "x": 50, "y": 200 },
-      "data": { "label": "Raw Idea", "inputValue": "A coffee shop that also sells plants." }
-    },
-    {
-      "id": "2",
-      "type": "neural-loop",
-      "position": { "x": 400, "y": 200 },
-      "data": { 
-        "label": "Iterator", 
-        "node_config": { "max_iterations": 3 } 
-      }
-    },
-    {
-      "id": "3",
-      "type": "neural-llm",
-      "position": { "x": 800, "y": 50 },
-      "data": { 
-        "label": "Refiner AI",
-        "node_config": {
-            "model": "openai/gpt-3.5-turbo",
-            "temperature": 0.9,
-            "systemPrompt": "You are a creative consultant. Take the input idea and add one innovative feature or improvement to it. Make it better."
-        }
-      }
-    },
-    {
-      "id": "4",
-      "type": "neural-output",
-      "position": { "x": 800, "y": 400 },
-      "data": { "label": "Polished Concept" }
-    }
-  ],
-  "edges": [
-    { "id": "e1-2", "source": "1", "target": "2", "animated": true },
-    { "id": "e2-3", "source": "2", "target": "3", "sourceHandle": "loop", "animated": true, "style": { "stroke": "#06b6d4" } },
-    { "id": "e3-2", "source": "3", "target": "2", "animated": true, "style": { "stroke": "#06b6d4", "strokeDasharray": "5,5" } },
-    { "id": "e2-4", "source": "2", "target": "4", "sourceHandle": "done", "animated": true, "style": { "stroke": "#10b981" } }
-  ]
+    "nodes": [
+        { "id": "1", "type": "neural-input", "position": { "x": 50, "y": 200 }, "data": { "label": "Raw Idea", "inputValue": "A mobile app that connects local farmers directly to consumers." } },
+        { "id": "2", "type": "neural-loop", "position": { "x": 400, "y": 200 }, "data": { "label": "Iterator", "node_config": { "max_iterations": 3 } } },
+        { "id": "3", "type": "neural-llm", "position": { "x": 800, "y": 50 }, "data": { "label": "Refiner AI", "node_config": { "model": "openai/gpt-3.5-turbo", "temperature": 0.9, "systemPrompt": "You are a world-class Product Strategist. Analyze the current iteration of the product concept. Critically evaluate its feasibility and add one 'Killer Feature' that would make it a unicorn startup. Be specific and bold." } } },
+        { "id": "4", "type": "neural-output", "position": { "x": 800, "y": 400 }, "data": { "label": "Polished Concept" } }
+    ],
+    "edges": [
+        { "id": "e1-2", "source": "1", "target": "2", "animated": true },
+        { "id": "e2-3", "source": "2", "target": "3", "sourceHandle": "loop", "animated": true, "style": { "stroke": "#06b6d4" } },
+        { "id": "e3-2", "source": "3", "target": "2", "animated": true, "style": { "stroke": "#06b6d4", "strokeDasharray": "5,5" } },
+        { "id": "e2-4", "source": "2", "target": "4", "sourceHandle": "done", "animated": true, "style": { "stroke": "#10b981" } }
+    ]
 }

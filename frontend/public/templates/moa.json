@@ -1,0 +1,53 @@
+{
+    "nodes": [
+        {
+            "id": "1",
+            "type": "neural-input",
+            "position": { "x": 50, "y": 200 },
+            "data": {
+                "label": "Complex Question",
+                "inputValue": "What are the most promising approaches to achieving Artificial General Intelligence (AGI) and what are the key challenges?"
+            }
+        },
+        {
+            "id": "2",
+            "type": "neural-moa-proposer",
+            "position": { "x": 450, "y": 200 },
+            "data": {
+                "label": "Diverse Experts",
+                "node_config": {
+                    "models": [
+                        "openai/gpt-4-turbo",
+                        "anthropic/claude-3.5-sonnet",
+                        "openai/gpt-3.5-turbo"
+                    ],
+                    "temperature": 0.7
+                }
+            }
+        },
+        {
+            "id": "3",
+            "type": "neural-moa-aggregator",
+            "position": { "x": 850, "y": 200 },
+            "data": {
+                "label": "Master Synthesizer",
+                "node_config": {
+                    "model": "openai/gpt-4-turbo",
+                    "temperature": 0.6,
+                    "strategy": "synthesis"
+                }
+            }
+        },
+        {
+            "id": "4",
+            "type": "neural-output",
+            "position": { "x": 1250, "y": 200 },
+            "data": { "label": "Superior Answer" }
+        }
+    ],
+    "edges": [
+        { "id": "e1-2", "source": "1", "target": "2", "animated": true },
+        { "id": "e2-3", "source": "2", "target": "3", "animated": true },
+        { "id": "e3-4", "source": "3", "target": "4", "animated": true }
+    ]
+}

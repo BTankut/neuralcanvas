@@ -47,7 +47,7 @@ const builtInTemplates = [
                 { id: "e1-2", source: "1", target: "2", animated: true },
                 { id: "e2-3", source: "2", target: "3", sourceHandle: "loop", animated: true, style: { stroke: "#06b6d4" } },
                 { id: "e3-2", source: "3", target: "2", animated: true, style: { stroke: "#06b6d4", strokeDasharray: "5,5" } },
-                { id: "e2-4", source: "2", target: "4", sourceHandle: "done", animated: true, style: { stroke: "#10b981" } }
+                { id: "e2-4", source: "2", "target": "4", "sourceHandle": "done", animated: true, style: { stroke: "#10b981" } }
             ]
         }
     },

@@ -1,0 +1,107 @@
+[
+    {
+        "id": "template-journalist",
+        "name": "The Tech Journalist",
+        "description": "An automated news reporting agent. Searches web, synthesizes, and drafts an article.",
+        "icon": "PhNewspaper",
+        "file": "/templates/journalist.json"
+    },
+    {
+        "id": "template-refiner",
+        "name": "The Idea Refiner",
+        "description": "Iteratively improves an idea 3 times using a loop.",
+        "icon": "PhLightbulb",
+        "file": "/templates/refiner.json"
+    },
+    {
+        "id": "template-router",
+        "name": "The Support Router",
+        "description": "Routes messages based on sentiment (Angry vs Happy).",
+        "icon": "PhGitFork",
+        "file": "/templates/router.json"
+    },
+    {
+        "id": "template-automanager",
+        "name": "The Auto-Manager (Dynamic)",
+        "description": "One Manager LLM assigns personas to 3 agents on the fly.",
+        "icon": "PhSquaresFour",
+        "file": "/templates/automanager.json"
+    },
+    {
+        "id": "template-board",
+        "name": "The Executive Board",
+        "description": "Orchestrates 3 specialized agents (Analyst, Creative, Finance) to solve a task.",
+        "icon": "PhSquaresFour",
+        "file": "/templates/board.json"
+    },
+    {
+        "id": "template-coder",
+        "name": "The Iterative Coder",
+        "description": "Coder and Reviewer loop until the code is APPROVED.",
+        "icon": "PhSquaresFour",
+        "file": "/templates/coder.json"
+    },
+    {
+        "id": "template-parallel-test",
+        "name": "Parallel Speed Test",
+        "description": "Benchmark 5 different AI models simultaneously.",
+        "icon": "PhSquaresFour",
+        "file": "/templates/parallel-test.json"
+    },
+    {
+        "id": "template-diamond",
+        "name": "The Diamond Pattern",
+        "description": "Pros vs Cons analysis synthesized by a third agent.",
+        "icon": "PhSquaresFour",
+        "file": "/templates/diamond.json"
+    },
+    {
+        "id": "template-research",
+        "name": "The Research Team",
+        "description": "Comprehensive research with web search and multiple expert perspectives.",
+        "icon": "PhSquaresFour",
+        "file": "/templates/research.json"
+    },
+    {
+        "id": "template-fallback-test",
+        "name": "Fallback System Test",
+        "description": "Demonstrates auto-recovery from a broken model ID.",
+        "icon": "PhSquaresFour",
+        "file": "/templates/fallback-test.json"
+    },
+    {
+        "id": "template-mapreduce",
+        "name": "Document Analyzer (MapReduce)",
+        "description": "Splits long text, processes in parallel, and reduces hierarchically.",
+        "icon": "PhSquaresFour",
+        "file": "/templates/mapreduce.json"
+    },
+    {
+        "id": "template-self-consistency",
+        "name": "The Jury (Self-Consistency)",
+        "description": "Generates 5 diverse answers and selects the consensus via majority vote.",
+        "icon": "PhSquaresFour",
+        "file": "/templates/self-consistency.json"
+    },
+    {
+        "id": "template-moa",
+        "name": "The Think Tank (MoA)",
+        "description": "Mixture-of-Agents architecture: Proposers -> Aggregator.",
+        "icon": "PhSquaresFour",
+        "file": "/templates/moa.json"
+    },
+    {
+        "id": "template-debate",
+        "name": "The Fact Checker (Debate)",
+        "description": "Multi-round debate with a final Judge verdict.",
+        "icon": "PhSquaresFour",
+        "file": "/templates/debate.json"
+    },
+    {
+        "id": "template-moa-vs-debate",
+        "name": "The Ultimate Battle: MoA vs Debate",
+        "description": "A grand showcase comparing MoA and Debate methodologies side-by-side.",
+        "icon": "PhSquaresFour",
+        "file": "/templates/moa-vs-debate.json"
+    }
+]

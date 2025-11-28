@@ -1,0 +1,51 @@
+{
+    "nodes": [
+        {
+            "id": "1",
+            "type": "neural-input",
+            "position": { "x": 50, "y": 300 },
+            "data": {
+                "label": "Long Document",
+                "inputValue": "Artificial Intelligence has revolutionized numerous industries. In healthcare, AI systems can now diagnose diseases with accuracy rivaling human experts. Machine learning algorithms analyze medical images, patient records, and genetic data to identify patterns invisible to the human eye.\n\nIn finance, AI powers algorithmic trading, fraud detection, and personalized banking services. Natural language processing enables chatbots to handle customer service inquiries 24/7. Computer vision allows autonomous vehicles to navigate complex environments.\n\nThe education sector benefits from adaptive learning platforms that customize content to individual student needs. AI tutors provide instant feedback and identify knowledge gaps. In manufacturing, predictive maintenance systems prevent equipment failures before they occur.\n\nHowever, ethical concerns about AI bias, privacy, and job displacement remain critical challenges that society must address as the technology continues to advance at an unprecedented pace."
+            }
+        },
+        {
+            "id": "2",
+            "type": "neural-splitter",
+            "position": { "x": 450, "y": 300 },
+            "data": {
+                "label": "Text Splitter",
+                "node_config": {
+                    "chunk_size": 400,
+                    "overlap": 50,
+                    "strategy": "semantic"
+                }
+            }
+        },
+        {
+            "id": "3",
+            "type": "neural-reduce",
+            "position": { "x": 850, "y": 300 },
+            "data": {
+                "label": "Hierarchical Reducer",
+                "node_config": {
+                    "strategy": "hierarchical",
+                    "model": "openai/gpt-3.5-turbo",
+                    "temperature": 0.4,
+                    "prompt": "Summarize and synthesize the following content. Extract key insights and organize by topic."
+                }
+            }
+        },
+        {
+            "id": "4",
+            "type": "neural-output",
+            "position": { "x": 1250, "y": 300 },
+            "data": { "label": "Final Summary" }
+        }
+    ],
+    "edges": [
+        { "id": "e1-2", "source": "1", "target": "2", "animated": true },
+        { "id": "e2-3", "source": "2", "target": "3", "animated": true },
+        { "id": "e3-4", "source": "3", "target": "4", "animated": true }
+    ]
+}

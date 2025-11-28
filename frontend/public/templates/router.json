@@ -1,61 +1,16 @@
 {
-  "id": "template-router",
-  "name": "The Support Router",
-  "description": "Analyzes customer messages and routes them to the correct AI agent (Apology vs. Gratitude).",
-  "nodes": [
-    {
-      "id": "1",
-      "type": "neural-input",
-      "position": { "x": 50, "y": 250 },
-      "data": { "label": "Customer Message", "inputValue": "I am very angry about the delay!" }
-    },
-    {
-      "id": "2",
-      "type": "neural-condition",
-      "position": { "x": 400, "y": 250 },
-      "data": { 
-        "label": "Sentiment Check", 
-        "node_config": { "conditionType": "contains", "targetValue": "angry" } 
-      }
-    },
-    {
-      "id": "3",
-      "type": "neural-llm",
-      "position": { "x": 800, "y": 50 },
-      "data": { 
-        "label": "Apology Bot",
-        "node_config": {
-            "model": "openai/gpt-3.5-turbo",
-            "temperature": 0.5,
-            "systemPrompt": "Write a polite and empathetic apology email to an angry customer."
-        }
-      }
-    },
-    {
-      "id": "4",
-      "type": "neural-llm",
-      "position": { "x": 800, "y": 450 },
-      "data": { 
-        "label": "Support Bot",
-        "node_config": {
-            "model": "openai/gpt-3.5-turbo",
-            "temperature": 0.5,
-            "systemPrompt": "Write a standard support acknowledgment email."
-        }
-      }
-    },
-    {
-      "id": "5",
-      "type": "neural-output",
-      "position": { "x": 1200, "y": 250 },
-      "data": { "label": "Final Response" }
-    }
-  ],
-  "edges": [
-    { "id": "e1-2", "source": "1", "target": "2", "animated": true },
-    { "id": "e2-3", "source": "2", "target": "3", "sourceHandle": "true", "animated": true, "style": { "stroke": "#10b981" } },
-    { "id": "e2-4", "source": "2", "target": "4", "sourceHandle": "false", "animated": true, "style": { "stroke": "#ef4444" } },
-    { "id": "e3-5", "source": "3", "target": "5", "animated": true },
-    { "id": "e4-5", "source": "4", "target": "5", "animated": true }
-  ]
+    "nodes": [
+        { "id": "1", "type": "neural-input", "position": { "x": 50, "y": 250 }, "data": { "label": "Customer Message", "inputValue": "I've been waiting for my package for 3 weeks and nobody is answering me! This is unacceptable service." } },
+        { "id": "2", "type": "neural-condition", "position": { "x": 400, "y": 250 }, "data": { "label": "Sentiment Check", "node_config": { "conditionType": "contains", "targetValue": "unacceptable" } } },
+        { "id": "3", "type": "neural-llm", "position": { "x": 800, "y": 50 }, "data": { "label": "Apology Bot", "node_config": { "model": "openai/gpt-3.5-turbo", "temperature": 0.5, "systemPrompt": "You are a Senior Customer Success Manager. Write a deeply empathetic, professional apology email. Offer a concrete solution (like a refund or discount) and assure the customer that you are personally taking over their case." } } },
+        { "id": "4", "type": "neural-llm", "position": { "x": 800, "y": 450 }, "data": { "label": "Support Bot", "node_config": { "model": "openai/gpt-3.5-turbo", "temperature": 0.5, "systemPrompt": "Write a standard, polite support acknowledgment email. Ask for the order number and provide typical shipping timelines." } } },
+        { "id": "5", "type": "neural-output", "position": { "x": 1200, "y": 250 }, "data": { "label": "Final Response" } }
+    ],
+    "edges": [
+        { "id": "e1-2", "source": "1", "target": "2", "animated": true },
+        { "id": "e2-3", "source": "2", "target": "3", "sourceHandle": "true", "animated": true, "style": { "stroke": "#10b981" } },
+        { "id": "e2-4", "source": "2", "target": "4", "sourceHandle": "false", "animated": true, "style": { "stroke": "#ef4444" } },
+        { "id": "e3-5", "source": "3", "target": "5", "animated": true },
+        { "id": "e4-5", "source": "4", "target": "5", "animated": true }
+    ]
 }

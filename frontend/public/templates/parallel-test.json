@@ -1,0 +1,23 @@
+{
+    "nodes": [
+        { "id": "1", "type": "neural-input", "position": { "x": 50, "y": 450 }, "data": { "label": "Question", "inputValue": "Write a haiku about artificial intelligence" } },
+        { "id": "2", "type": "neural-llm", "position": { "x": 500, "y": 50 }, "data": { "label": "Fast Model", "node_config": { "model": "openai/gpt-3.5-turbo", "temperature": 0.8, "systemPrompt": "You are a poet. Write a beautiful haiku." } } },
+        { "id": "3", "type": "neural-llm", "position": { "x": 500, "y": 250 }, "data": { "label": "Quality Model", "node_config": { "model": "openai/gpt-4-turbo", "temperature": 0.7, "systemPrompt": "You are a master poet. Write an exquisite haiku." } } },
+        { "id": "4", "type": "neural-llm", "position": { "x": 500, "y": 450 }, "data": { "label": "Creative Model", "node_config": { "model": "anthropic/claude-3.5-sonnet", "temperature": 0.9, "systemPrompt": "You are a creative poet. Write an innovative haiku." } } },
+        { "id": "5", "type": "neural-llm", "position": { "x": 500, "y": 650 }, "data": { "label": "Alternative Model", "node_config": { "model": "google/gemini-pro-1.5", "temperature": 0.8, "systemPrompt": "You are a unique poet. Write a distinctive haiku." } } },
+        { "id": "6", "type": "neural-llm", "position": { "x": 500, "y": 850 }, "data": { "label": "Open Source Model", "node_config": { "model": "meta-llama/llama-3.1-70b-instruct", "temperature": 0.7, "systemPrompt": "You are a poetic AI. Write a haiku." } } },
+        { "id": "7", "type": "neural-output", "position": { "x": 1000, "y": 450 }, "data": { "label": "All 5 Haikus" } }
+    ],
+    "edges": [
+        { "id": "e1-2", "source": "1", "target": "2", "animated": true },
+        { "id": "e1-3", "source": "1", "target": "3", "animated": true },
+        { "id": "e1-4", "source": "1", "target": "4", "animated": true },
+        { "id": "e1-5", "source": "1", "target": "5", "animated": true },
+        { "id": "e1-6", "source": "1", "target": "6", "animated": true },
+        { "id": "e2-7", "source": "2", "target": "7", "animated": true },
+        { "id": "e3-7", "source": "3", "target": "7", "animated": true },
+        { "id": "e4-7", "source": "4", "target": "7", "animated": true },
+        { "id": "e5-7", "source": "5", "target": "7", "animated": true },
+        { "id": "e6-7", "source": "6", "target": "7", "animated": true }
+    ]
+}
