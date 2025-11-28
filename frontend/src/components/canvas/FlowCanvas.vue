@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, markRaw, watch } from 'vue'
+import { ref, markRaw, watch, nextTick } from 'vue'
 import { VueFlow, useVueFlow } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
 import { Controls } from '@vue-flow/controls'
@@ -22,16 +22,93 @@ import ConnectionStatus from '../ui/ConnectionStatus.vue'
 import CostDisplay from '../ui/CostDisplay.vue'
 import ContextMenu from '../ui/ContextMenu.vue'
 import PersistenceModal from '../ui/PersistenceModal.vue'
-import { PhGearSix, PhSpinner, PhFloppyDisk, PhFolderOpen } from '@phosphor-icons/vue'
+import { PhGearSix, PhSpinner, PhFloppyDisk, PhFolderOpen, PhTrash, PhArrowUUpLeft, PhArrowUUpRight } from '@phosphor-icons/vue'
+import { useMagicKeys, whenever } from '@vueuse/core'
 
 import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
 import '@vue-flow/controls/dist/style.css'
 
 const store = useWorkflowStore()
-const { onConnect, addEdges } = useVueFlow()
+const { onConnect, addEdges, toObject, setNodes, setEdges } = useVueFlow()
 const settingsModal = ref()
 const persistenceModal = ref()
+
+// --- History Management (Undo/Redo) ---
+const history = ref<string[]>([])
+const historyIndex = ref(-1)
+const isUndoRedoOperation = ref(false)
+
+function saveState() {
+    if (isUndoRedoOperation.value) return
+
+    const currentState = JSON.stringify(toObject())
+    
+    // If we are in the middle of history, discard future states
+    if (historyIndex.value < history.value.length - 1) {
+        history.value = history.value.slice(0, historyIndex.value + 1)
+    }
+    
+    // Avoid duplicate consecutive saves
+    if (history.value[historyIndex.value] !== currentState) {
+        history.value.push(currentState)
+        historyIndex.value++
+        
+        // Limit history size
+        if (history.value.length > 50) {
+            history.value.shift()
+            historyIndex.value--
+        }
+    }
+}
+
+async function undo() {
+    if (historyIndex.value > 0) {
+        isUndoRedoOperation.value = true
+        historyIndex.value--
+        const stateJson = history.value[historyIndex.value]
+        if (stateJson) {
+            const state = JSON.parse(stateJson)
+            setNodes(state.nodes)
+            setEdges(state.edges)
+            await nextTick()
+        }
+        isUndoRedoOperation.value = false
+    }
+}
+
+async function redo() {
+    if (historyIndex.value < history.value.length - 1) {
+        isUndoRedoOperation.value = true
+        historyIndex.value++
+        const stateJson = history.value[historyIndex.value]
+        if (stateJson) {
+            const state = JSON.parse(stateJson)
+            setNodes(state.nodes)
+            setEdges(state.edges)
+            await nextTick()
+        }
+        isUndoRedoOperation.value = false
+    }
+}
+
+function resetCanvas() {
+    if (confirm('Are you sure you want to clear the entire canvas?')) {
+        nodes.value = []
+        edges.value = []
+        saveState()
+    }
+}
+
+// Keyboard Shortcuts
+const { Meta_Z, Ctrl_Z, Meta_Shift_Z, Ctrl_Y } = useMagicKeys()
+
+if (Meta_Z) whenever(Meta_Z, () => undo())
+if (Ctrl_Z) whenever(Ctrl_Z, () => undo())
+if (Meta_Shift_Z) whenever(Meta_Shift_Z, () => redo())
+if (Ctrl_Y) whenever(Ctrl_Y, () => redo())
+
+// --- End History ---
 
 const nodeTypes = {
   'neural-input': markRaw(InputNode),
@@ -89,8 +166,15 @@ const edges = ref([
 
 // Sync with store
 // Watch local changes -> update store
-watch(nodes, (newNodes) => store.setNodes(newNodes), { deep: true })
-watch(edges, (newEdges) => store.setEdges(newEdges), { deep: true })
+watch(nodes, (newNodes) => {
+    store.setNodes(newNodes)
+    saveState() // Save for Undo
+}, { deep: true })
+
+watch(edges, (newEdges) => {
+    store.setEdges(newEdges)
+    saveState() // Save for Undo
+}, { deep: true })
 
 // Watch store changes (e.g. LOAD) -> update local
 watch(() => store.nodes, (newNodes) => {
@@ -140,6 +224,32 @@ onConnect((params) => addEdges(params))
         </div>
 
         <!-- Main Controls -->
+        <div class="flex gap-1 mr-4 border-r border-slate-700 pr-4">
+            <button 
+                @click="undo"
+                class="w-10 h-10 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-neon-blue transition-all backdrop-blur-md disabled:opacity-30"
+                :disabled="historyIndex <= 0"
+                title="Undo (Ctrl+Z)"
+            >
+                <PhArrowUUpLeft weight="bold" class="text-xl" />
+            </button>
+            <button 
+                @click="redo"
+                class="w-10 h-10 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-neon-blue transition-all backdrop-blur-md disabled:opacity-30"
+                :disabled="historyIndex >= history.length - 1"
+                title="Redo (Ctrl+Y)"
+            >
+                <PhArrowUUpRight weight="bold" class="text-xl" />
+            </button>
+            <button 
+                @click="resetCanvas"
+                class="w-10 h-10 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-neon-red transition-all backdrop-blur-md ml-2"
+                title="Clear Canvas"
+            >
+                <PhTrash weight="bold" class="text-xl" />
+            </button>
+        </div>
+
         <button 
             @click="settingsModal.open()"
             class="w-10 h-10 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-white transition-all backdrop-blur-md"
