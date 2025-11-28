@@ -1,0 +1,146 @@
+{
+    "nodes": [
+        {
+            "id": "1",
+            "type": "neural-input",
+            "position": { "x": 50, "y": 400 },
+            "data": { "label": "Startup Idea", "inputValue": "A social network for house plants where they can rate their owners." }
+        },
+        {
+            "id": "2",
+            "type": "neural-search",
+            "position": { "x": 400, "y": 400 },
+            "data": { "label": "Market Intel", "node_config": { "searchQuery": "" } }
+        },
+        
+        // STAGE 1: STRATEGY (Mixture of Agents)
+        {
+            "id": "3",
+            "type": "neural-moa-proposer",
+            "position": { "x": 750, "y": 200 },
+            "data": {
+                "label": "The C-Suite (Brainstorm)",
+                "node_config": {
+                    "models": ["openai/gpt-4-turbo", "anthropic/claude-3.5-sonnet", "google/gemini-pro-1.5"],
+                    "temperature": 0.8
+                }
+            }
+        },
+        {
+            "id": "4",
+            "type": "neural-moa-aggregator",
+            "position": { "x": 1100, "y": 200 },
+            "data": {
+                "label": "Strategy Synthesizer",
+                "node_config": { "model": "openai/gpt-4-turbo", "temperature": 0.5, "strategy": "synthesis" }
+            }
+        },
+
+        // STAGE 2: PARALLEL EXECUTION BRANCHES
+
+        // Branch A: ENGINEERING (Iterative Loop)
+        {
+            "id": "5",
+            "type": "neural-llm",
+            "position": { "x": 1500, "y": -100 },
+            "data": {
+                "label": "MVP Architect",
+                "node_config": { "model": "openai/gpt-3.5-turbo", "systemPrompt": "Create a high-level technical stack and database schema for this product. Be technical." }
+            }
+        },
+        {
+            "id": "6",
+            "type": "neural-loop",
+            "position": { "x": 1850, "y": -100 },
+            "data": { "label": "Code Review Loop", "node_config": { "max_iterations": 3, "targetValue": "APPROVED" } }
+        },
+        {
+            "id": "7",
+            "type": "neural-llm",
+            "position": { "x": 2200, "y": -250 },
+            "data": {
+                "label": "Refiner Bot",
+                "node_config": { "model": "openai/gpt-4-turbo", "systemPrompt": "You are a CTO. Review the tech stack. If it lacks scalability or security, critique it. If it is perfect, just say APPROVED." }
+            }
+        },
+
+        // Branch B: LEGAL (Debate & Vote)
+        {
+            "id": "8",
+            "type": "neural-debate",
+            "position": { "x": 1500, "y": 300 },
+            "data": {
+                "label": "Risk vs Growth Debate",
+                "node_config": { "model": "openai/gpt-4-turbo", "debaters": 2, "rounds": 2, "temperature": 0.8 }
+            }
+        },
+        {
+            "id": "9",
+            "type": "neural-voting",
+            "position": { "x": 1900, "y": 300 },
+            "data": {
+                "label": "Legal Verdict",
+                "node_config": { "model": "openai/gpt-4-turbo", "method": "judge" }
+            }
+        },
+
+        // Branch C: FINANCE (Self-Consistency)
+        {
+            "id": "10",
+            "type": "neural-self-consistency",
+            "position": { "x": 1500, "y": 600 },
+            "data": {
+                "label": "Valuation Estimator",
+                "node_config": { "model": "openai/gpt-3.5-turbo", "samples": 5, "voting": "majority", "temperature": 0.7 }
+            }
+        },
+
+        // STAGE 3: FINAL PITCH
+        {
+            "id": "11",
+            "type": "neural-llm",
+            "position": { "x": 2600, "y": 250 },
+            "data": {
+                "label": "Pitch Deck Creator",
+                "node_config": {
+                    "model": "openai/gpt-4-turbo",
+                    "temperature": 0.6,
+                    "systemPrompt": "You are a legendary Silicon Valley Founder. \n\nCollect all the inputs:\n1. Validated Tech Stack (from Loop)\n2. Legal Risk Assessment (from Debate)\n3. Valuation (from Self-Consistency)\n4. Core Strategy (from MoA)\n\nWrite a killer 1-page Investor Pitch Deck. Use Markdown. Make it bold, visionary, and professional."
+                }
+            }
+        },
+        {
+            "id": "12",
+            "type": "neural-output",
+            "position": { "x": 3000, "y": 250 },
+            "data": { "label": "Final Investor Deck" }
+        }
+    ],
+    "edges": [
+        // Intro Flow
+        { "id": "e1-2", "source": "1", "target": "2", "animated": true },
+        { "id": "e2-3", "source": "2", "target": "3", "animated": true },
+        { "id": "e3-4", "source": "3", "target": "4", "animated": true, "style": { "stroke": "#06b6d4" } },
+
+        // Branching Out from Strategy
+        { "id": "e4-5", "source": "4", "target": "5", "animated": true, "label": "Tech Specs" },
+        { "id": "e4-8", "source": "4", "target": "8", "animated": true, "label": "Legal Check" },
+        { "id": "e4-10", "source": "4", "target": "10", "animated": true, "label": "Financials" },
+
+        // Tech Loop
+        { "id": "e5-6", "source": "5", "target": "6", "animated": true },
+        { "id": "e6-7", "source": "6", "target": "7", "sourceHandle": "loop", "animated": true, "style": { "stroke": "#06b6d4" } },
+        { "id": "e7-6", "source": "7", "target": "6", "animated": true, "style": { "stroke": "#06b6d4", "strokeDasharray": "5,5" } },
+        { "id": "e6-11", "source": "6", "target": "11", "sourceHandle": "done", "animated": true, "style": { "stroke": "#10b981" } },
+
+        // Legal Flow
+        { "id": "e8-9", "source": "8", "target": "9", "animated": true },
+        { "id": "e9-11", "source": "9", "target": "11", "animated": true, "style": { "stroke": "#ef4444" } },
+
+        // Finance Flow
+        { "id": "e10-11", "source": "10", "target": "11", "animated": true, "style": { "stroke": "#f59e0b" } },
+
+        // Final Output
+        { "id": "e11-12", "source": "11", "target": "12", "animated": true }
+    ]
+}

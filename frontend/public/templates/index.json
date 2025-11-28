@@ -7,6 +7,13 @@
         "file": "/templates/simple.json"
     },
     {
+        "id": "template-startup-sim",
+        "name": "The Startup Launchpad (Ultimate)",
+        "description": "A massive simulation demonstrating ALL capabilities. Parallel execution of Strategy (MoA), Code (Loop), Legal (Debate), and Finance (Consistency) to generate a full Investor Pitch Deck.",
+        "icon": "PhRocketLaunch",
+        "file": "/templates/startup-sim.json"
+    },
+    {
         "id": "template-journalist",
         "name": "The Tech Journalist",
         "description": "An automated news reporting agent. Searches web, synthesizes, and drafts an article.",
