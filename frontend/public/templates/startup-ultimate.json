@@ -4,7 +4,7 @@
             "id": "1",
             "type": "neural-input",
             "position": { "x": 50, "y": 400 },
-            "data": { "label": "Startup Idea", "inputValue": "A social network for house plants where they can rate their owners." }
+            "data": { "label": "Startup Idea", "inputValue": "AI-powered personalized nutrition and meal planning app that uses photos of food to track calories." }
         },
         {
             "id": "query-gen",
@@ -13,7 +13,7 @@
             "data": {
                 "label": "Query Architect",
                 "node_config": {
-                    "model": "openai/gpt-3.5-turbo",
+                    "model": "openai/gpt-4o",
                     "temperature": 0.3,
                     "systemPrompt": "You are a Market Research Expert. Your goal is to convert a raw startup idea into a targeted Google Search Query to find competitors and market data.\n\nOutput ONLY the search query. Do not use quotes. Focus on keywords like 'market size', 'competitors', 'trends'."
                 }
@@ -23,7 +23,13 @@
             "id": "2",
             "type": "neural-search",
             "position": { "x": 750, "y": 400 },
-            "data": { "label": "Market Intel", "node_config": { "searchQuery": "" } }
+            "data": {
+                "label": "Market Intel",
+                "node_config": {
+                    "searchQuery": "",
+                    "model": "google/gemini-1.5-pro"
+                }
+            }
         },
         {
             "id": "3",
@@ -32,8 +38,8 @@
             "data": {
                 "label": "The C-Suite (Brainstorm)",
                 "node_config": {
-                    "models": ["openai/gpt-4-turbo", "anthropic/claude-3.5-sonnet", "google/gemini-pro-1.5"],
-                    "temperature": 0.8
+                    "models": ["openai/gpt-4o", "anthropic/claude-3.5-sonnet", "meta-llama/llama-3.1-70b-instruct"],
+                    "temperature": 0.7
                 }
             }
         },
@@ -43,7 +49,7 @@
             "position": { "x": 1450, "y": 200 },
             "data": {
                 "label": "Strategy Synthesizer",
-                "node_config": { "model": "openai/gpt-4-turbo", "temperature": 0.5, "strategy": "synthesis" }
+                "node_config": { "model": "openai/gpt-4o", "temperature": 0.5, "strategy": "synthesis" }
             }
         },
         {
@@ -52,7 +58,7 @@
             "position": { "x": 1850, "y": -100 },
             "data": {
                 "label": "MVP Architect",
-                "node_config": { "model": "openai/gpt-3.5-turbo", "systemPrompt": "Create a high-level technical stack and database schema for this product. Be technical." }
+                "node_config": { "model": "anthropic/claude-3.5-sonnet", "systemPrompt": "Create a high-level technical stack and database schema for this product. Be technical." }
             }
         },
         {
@@ -67,7 +73,7 @@
             "position": { "x": 2550, "y": -250 },
             "data": {
                 "label": "Refiner Bot",
-                "node_config": { "model": "openai/gpt-4-turbo", "systemPrompt": "You are a CTO. Review the tech stack. If it lacks scalability or security, critique it. If it is perfect, just say APPROVED." }
+                "node_config": { "model": "openai/gpt-4o", "systemPrompt": "You are a CTO. Review the tech stack. If it lacks scalability or security, critique it. If it is perfect, just say APPROVED." }
             }
         },
         {
@@ -76,7 +82,7 @@
             "position": { "x": 1850, "y": 300 },
             "data": {
                 "label": "Risk vs Growth Debate",
-                "node_config": { "model": "openai/gpt-4-turbo", "debaters": 2, "rounds": 2, "temperature": 0.8 }
+                "node_config": { "model": "openai/gpt-4o-mini", "debaters": 2, "rounds": 2, "temperature": 0.8 }
             }
         },
         {
@@ -85,7 +91,7 @@
             "position": { "x": 2250, "y": 300 },
             "data": {
                 "label": "Legal Verdict",
-                "node_config": { "model": "openai/gpt-4-turbo", "method": "judge" }
+                "node_config": { "model": "openai/gpt-4o", "method": "judge" }
             }
         },
         {
@@ -94,7 +100,7 @@
             "position": { "x": 1850, "y": 600 },
             "data": {
                 "label": "Valuation Estimator",
-                "node_config": { "model": "openai/gpt-3.5-turbo", "samples": 5, "voting": "majority", "temperature": 0.7 }
+                "node_config": { "model": "openai/gpt-4o-mini", "samples": 5, "voting": "majority", "temperature": 0.7 }
             }
         },
         {
@@ -104,7 +110,7 @@
             "data": {
                 "label": "Pitch Deck Creator",
                 "node_config": {
-                    "model": "openai/gpt-4-turbo",
+                    "model": "openai/gpt-4o",
                     "temperature": 0.6,
                     "systemPrompt": "You are a legendary Silicon Valley Founder. \n\nCollect all the inputs:\n1. Validated Tech Stack (from Loop)\n2. Legal Risk Assessment (from Debate)\n3. Valuation (from Self-Consistency)\n4. Core Strategy (from MoA)\n\nWrite a killer 1-page Investor Pitch Deck. Use Markdown. Make it bold, visionary, and professional."
                 }
