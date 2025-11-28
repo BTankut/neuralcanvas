@@ -149,7 +149,7 @@ const builtInTemplates = [
     },
     {
         id: 'template-parallel-test',
-        name: '⚡ Parallel Speed Test',
+        name: 'Parallel Speed Test',
         description: 'A benchmark workflow that executes 5 different AI models simultaneously. Useful for comparing speed and creative variety across different LLMs.',
         icon: 'PhSquaresFour',
         data: {
@@ -178,7 +178,7 @@ const builtInTemplates = [
     },
     {
         id: 'template-diamond',
-        name: '💎 The Diamond Pattern',
+        name: 'The Diamond Pattern',
         description: 'A structured reasoning pattern where a topic is split into Pros and Cons by two separate agents, and then synthesized by a third agent into a balanced verdict.',
         icon: 'PhSquaresFour',
         data: {
@@ -200,7 +200,7 @@ const builtInTemplates = [
     },
     {
         id: 'template-research',
-        name: '🔬 The Research Team',
+        name: 'The Research Team',
         description: 'A comprehensive research workflow. It combines web search with multiple AI perspectives (Historical, Future, Expert) to produce a deep-dive report.',
         icon: 'PhSquaresFour',
         data: {
@@ -231,7 +231,7 @@ const builtInTemplates = [
     },
     {
         id: 'template-fallback-test',
-        name: '🛡️ Fallback System Test',
+        name: 'Fallback System Test',
         description: 'Demonstrates system resilience. It purposely uses an invalid model ID to trigger the automatic fallback mechanism, ensuring workflow continuity.',
         icon: 'PhSquaresFour',
         data: {
@@ -248,7 +248,7 @@ const builtInTemplates = [
     },
     {
         id: 'template-mapreduce',
-        name: '📄 Document Analyzer (MapReduce)',
+        name: 'Document Analyzer (MapReduce)',
         description: 'A powerful method for processing large documents. The text is split into chunks, processed in parallel, and then summarized hierarchically to fit context windows.',
         icon: 'PhSquaresFour',
         data: {
@@ -305,7 +305,7 @@ const builtInTemplates = [
     },
     {
         id: 'template-self-consistency',
-        name: '🎲 The Jury (Self-Consistency)',
+        name: 'The Jury (Self-Consistency)',
         description: 'Enhances reliability by generating multiple answers to the same prompt and selecting the most consistent one via majority vote. Ideal for logic and math.',
         icon: 'PhSquaresFour',
         data: {
@@ -348,7 +348,7 @@ const builtInTemplates = [
     },
     {
         id: 'template-moa',
-        name: '🎭 The Think Tank (MoA)',
+        name: 'The Think Tank (MoA)',
         description: 'Uses "Mixture-of-Agents" architecture. Several diverse models propose answers, and an aggregator model synthesizes them into a superior final response.',
         icon: 'PhSquaresFour',
         data: {
@@ -407,7 +407,7 @@ const builtInTemplates = [
     },
     {
         id: 'template-debate',
-        name: '⚔️ The Fact Checker (Debate)',
+        name: 'The Fact Checker (Debate)',
         description: 'Simulates a multi-round debate between opposing AI viewpoints. A Judge agent evaluates the arguments and declares a winner based on logic and evidence.',
         icon: 'PhSquaresFour',
         data: {
@@ -464,7 +464,7 @@ const builtInTemplates = [
     },
     {
         id: 'template-moa-vs-debate',
-        name: '⚔️ The Ultimate Battle: MoA vs Debate',
+        name: 'The Ultimate Battle: MoA vs Debate',
         description: 'A grand showcase comparing two advanced methodologies side-by-side. One path uses Mixture-of-Agents to synthesize an answer, while the other uses a Debate. A final Arbiter compares the results.',
         icon: 'PhSquaresFour',
         data: {
