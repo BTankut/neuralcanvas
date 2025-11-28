@@ -208,90 +208,93 @@ onConnect((params) => addEdges(params))
 <template>
   <div class="h-full w-full bg-void text-slate-200 relative">
     
-    <!-- Header Toolbar -->
-    <div class="absolute top-4 right-4 z-50 flex gap-3 items-center">
+    <!-- Header Toolbar (Top Right) -->
+    <div class="absolute top-4 right-4 z-50 flex gap-2 items-center">
         
-        <!-- Template Info (if loaded) -->
-        <div v-if="store.currentTemplate" class="flex items-center gap-2 bg-slate-900/80 border border-slate-700 rounded-full px-3 py-1.5 backdrop-blur-md mr-2 group relative">
-            <span class="text-xs font-bold text-neon-yellow tracking-wide">{{ store.currentTemplate.name }}</span>
-            <PhInfo weight="bold" class="text-slate-400 cursor-help" />
+        <!-- Template Info (Compact) -->
+        <div v-if="store.currentTemplate" class="flex items-center gap-1 bg-slate-900/80 border border-slate-700 rounded-full px-2 py-1 backdrop-blur-md mr-1 group relative">
+            <span class="text-[10px] font-bold text-neon-yellow tracking-wide truncate max-w-[100px] sm:max-w-[200px]">{{ store.currentTemplate.name }}</span>
+            <PhInfo weight="bold" class="text-slate-400 cursor-help text-xs" />
             
             <!-- Tooltip -->
             <div class="absolute top-full right-0 mt-2 w-48 p-2 bg-slate-800 border border-slate-600 rounded text-[10px] text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-xl">
                 {{ store.currentTemplate.description }}
             </div>
 
-            <!-- Reload Template -->
-            <button @click="reloadTemplate" class="ml-2 p-1 hover:bg-slate-700 rounded-full text-slate-400 hover:text-white transition-colors" title="Reset Template">
-                <PhArrowCounterClockwise weight="bold" />
+            <button @click="reloadTemplate" class="ml-1 p-0.5 hover:bg-slate-700 rounded-full text-slate-400 hover:text-white transition-colors" title="Reset Template">
+                <PhArrowCounterClockwise weight="bold" class="text-xs" />
             </button>
         </div>
 
-        <!-- Status Indicators -->
-        <div class="flex gap-2 mr-4 border-r border-slate-700 pr-4">
+        <!-- Status Indicators (Compact) -->
+        <div class="flex gap-1 mr-2 border-r border-slate-700 pr-2">
             <ConnectionStatus />
             <CostDisplay />
         </div>
 
-        <!-- Main Controls -->
-        <div class="flex gap-1 mr-4 border-r border-slate-700 pr-4">
+        <!-- Canvas Controls (Undo/Redo/Clear) -->
+        <div class="flex gap-1 mr-2 border-r border-slate-700 pr-2">
             <button 
                 @click="undo"
-                class="w-10 h-10 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-neon-blue transition-all backdrop-blur-md disabled:opacity-30"
+                class="w-8 h-8 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-neon-blue transition-all backdrop-blur-md disabled:opacity-30"
                 :disabled="historyIndex <= 0"
                 title="Undo (Ctrl+Z)"
             >
-                <PhArrowUUpLeft weight="bold" class="text-xl" />
+                <PhArrowUUpLeft weight="bold" class="text-lg" />
             </button>
             <button 
                 @click="redo"
-                class="w-10 h-10 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-neon-blue transition-all backdrop-blur-md disabled:opacity-30"
+                class="w-8 h-8 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-neon-blue transition-all backdrop-blur-md disabled:opacity-30"
                 :disabled="historyIndex >= history.length - 1"
                 title="Redo (Ctrl+Y)"
             >
-                <PhArrowUUpRight weight="bold" class="text-xl" />
+                <PhArrowUUpRight weight="bold" class="text-lg" />
             </button>
             <button 
                 @click="resetCanvas"
-                class="w-10 h-10 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-neon-red transition-all backdrop-blur-md ml-2"
+                class="w-8 h-8 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-neon-red transition-all backdrop-blur-md ml-1"
                 title="Clear Canvas"
             >
-                <PhBroom weight="bold" class="text-xl" />
+                <PhBroom weight="bold" class="text-lg" />
             </button>
         </div>
 
-        <!-- Persistence Controls -->
-        <div class="flex gap-1 mr-4 border-r border-slate-700 pr-4">
+        <!-- Persistence Controls (Save/Load) -->
+        <div class="flex gap-1 mr-2 border-r border-slate-700 pr-2">
             <button 
                 @click="persistenceModal.open('save')"
-                class="w-10 h-10 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-neon-blue transition-all backdrop-blur-md"
+                class="w-8 h-8 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-neon-blue transition-all backdrop-blur-md"
                 title="Save Workflow"
             >
-                <PhFloppyDisk weight="bold" class="text-xl" />
+                <PhFloppyDisk weight="bold" class="text-lg" />
             </button>
             <button 
                 @click="persistenceModal.open('load')"
-                class="w-10 h-10 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-neon-green transition-all backdrop-blur-md"
+                class="w-8 h-8 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-neon-green transition-all backdrop-blur-md"
                 title="Load Workflow"
             >
-                <PhFolderOpen weight="bold" class="text-xl" />
+                <PhFolderOpen weight="bold" class="text-lg" />
             </button>
         </div>
 
+        <!-- Settings -->
         <button 
             @click="settingsModal.open()"
-            class="w-10 h-10 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-white transition-all backdrop-blur-md"
+            class="w-8 h-8 flex items-center justify-center bg-slate-900/50 border border-slate-700 text-slate-400 rounded-full hover:bg-slate-800 hover:text-white transition-all backdrop-blur-md"
             title="Settings"
         >
-            <PhGearSix weight="bold" class="text-xl" />
+            <PhGearSix weight="bold" class="text-lg" />
         </button>
+    </div>
 
+    <!-- RUN FLOW Button (Bottom Right) -->
+    <div class="absolute bottom-6 right-6 z-50">
         <button 
             @click="store.runWorkflow"
             :disabled="store.isExecuting"
-            class="px-6 py-2 bg-neon-blue/20 border border-neon-blue text-neon-blue rounded-full hover:bg-neon-blue hover:text-black transition-all font-bold shadow-[0_0_15px_rgba(59,130,246,0.5)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 backdrop-blur-md"
+            class="px-8 py-3 bg-neon-blue/20 border border-neon-blue text-neon-blue rounded-full hover:bg-neon-blue hover:text-black transition-all font-bold shadow-[0_0_20px_rgba(59,130,246,0.6)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 backdrop-blur-md text-sm tracking-widest transform hover:scale-105 active:scale-95"
         >
-            <PhSpinner v-if="store.isExecuting" class="animate-spin w-4 h-4" />
+            <PhSpinner v-if="store.isExecuting" class="animate-spin w-5 h-5" />
             <span v-if="!store.isExecuting">RUN FLOW</span>
             <span v-else>EXECUTING...</span>
         </button>
