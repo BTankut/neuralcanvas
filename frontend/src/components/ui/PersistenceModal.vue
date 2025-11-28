@@ -124,6 +124,28 @@ const builtInTemplates = [
                 { id: "e6-7", source: "6", target: "7", animated: true }
             ]
         }
+    },
+    {
+        id: 'template-coder',
+        name: 'The Iterative Coder (Smart Loop)',
+        description: 'Coder and Reviewer loop until the code is APPROVED.',
+        icon: 'PhSquaresFour',
+        data: {
+            nodes: [
+                { id: "1", type: "neural-input", position: { x: 50, y: 200 }, data: { label: "Coding Task", inputValue: "Write a Python function to check if a number is prime. Include error handling." } },
+                { id: "2", type: "neural-loop", position: { x: 400, y: 200 }, data: { label: "Quality Gate", node_config: { max_iterations: 5, targetValue: "APPROVED" } } },
+                { id: "3", type: "neural-llm", position: { x: 800, y: 50 }, data: { label: "Junior Developer", node_config: { model: "openai/gpt-3.5-turbo", temperature: 0.4, systemPrompt: "You are a Junior Python Developer. Write code based on the instructions. If you receive feedback, FIX the code based on that feedback." } } },
+                { id: "4", type: "neural-llm", position: { x: 1200, y: 200 }, data: { label: "Senior Reviewer", node_config: { model: "openai/gpt-4-turbo", temperature: 0.2, systemPrompt: "You are a Senior Tech Lead. Review the code. \n1. If it is perfect and robust, output ONLY the word: APPROVED.\n2. If there are bugs or missing requirements, explain what needs to be fixed concisely." } } },
+                { id: "5", type: "neural-output", position: { x: 1600, y: 200 }, data: { label: "Final Code" } }
+            ],
+            edges: [
+                { id: "e1-2", source: "1", target: "2", animated: true },
+                { id: "e2-3", source: "2", target: "3", sourceHandle: "loop", animated: true, style: { stroke: "#06b6d4" } },
+                { id: "e3-4", source: "3", target: "4", animated: true },
+                { id: "e4-2", source: "4", target: "2", animated: true, style: { stroke: "#ef4444", strokeDasharray: "5,5" } },
+                { id: "e2-5", source: "2", target: "5", sourceHandle: "done", animated: true, style: { stroke: "#10b981" } }
+            ]
+        }
     }
 ]
 

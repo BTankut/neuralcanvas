@@ -10,23 +10,26 @@ const { node } = useNode()
 
 // Config State
 const maxIterations = ref(node.data?.node_config?.max_iterations || 3)
+const targetValue = ref(node.data?.node_config?.targetValue || '') // Break condition
 
 // Sync config local -> node
-watch(maxIterations, (val) => {
+watch([maxIterations, targetValue], ([newMax, newTarget]) => {
     node.data = {
         ...node.data,
         node_config: {
             ...node.data?.node_config,
-            max_iterations: val
+            max_iterations: newMax,
+            targetValue: newTarget
         }
     }
 })
 
-// Sync node -> local (Fix for loading templates)
+// Sync node -> local
 watch(() => node.data?.node_config?.max_iterations, (newVal) => {
-    if (newVal !== undefined && newVal !== maxIterations.value) {
-        maxIterations.value = newVal
-    }
+    if (newVal !== undefined && newVal !== maxIterations.value) maxIterations.value = newVal
+})
+watch(() => node.data?.node_config?.targetValue, (newVal) => {
+    if (newVal !== undefined && newVal !== targetValue.value) targetValue.value = newVal
 })
 
 // Execution State
@@ -61,20 +64,30 @@ const currentIteration = computed(() => status.value.usage?.current_iteration ||
     
     <!-- Body -->
     <div class="node-body p-3 space-y-3">
-        <div class="flex justify-between text-[10px] text-slate-400 mb-1">
-            <span class="uppercase">Loop Count</span>
-            <span>{{ maxIterations }}</span>
-        </div>
-        <input 
-            type="range" 
-            v-model.number="maxIterations" 
-            min="1" max="10" step="1"
-            class="w-full h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-neon-cyan"
-        />
+                <div class="flex justify-between text-[10px] text-slate-400 mb-1">
+                    <span class="uppercase">Loop Count</span>
+                    <span>{{ maxIterations }}</span>
+                </div>
+                <input 
+                    type="range" 
+                    v-model.number="maxIterations" 
+                    min="1" max="10" step="1"
+                    class="w-full h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-neon-cyan mb-3"
+                />
+                
+                <div>
+                    <label class="text-[10px] text-slate-400 mb-1 block uppercase">Break Condition (Optional)</label>
+                    <input 
+                        type="text" 
+                        v-model="targetValue"
+                        placeholder="e.g. APPROVED"
+                        class="w-full bg-black/50 border border-slate-700 rounded text-xs text-slate-200 p-2 focus:border-neon-cyan outline-none font-mono"
+                    />
+                    <div class="text-[9px] text-slate-500 mt-1 italic">
+                        Stops loop if input contains this text.
+                    </div>
+                </div>
         
-        <div class="text-[10px] text-slate-500 italic text-center">
-            Repeats the flow {{ maxIterations }} times
-        </div>
     </div>
 
     <!-- Input Handle -->

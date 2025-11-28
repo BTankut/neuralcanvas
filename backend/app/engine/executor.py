@@ -14,6 +14,7 @@ class WorkflowExecutor:
         self.node_map = {node.id: node for node in graph.nodes}
         self.execution_results: Dict[str, Any] = {} # node_id -> result
         self.node_states: Dict[str, Dict[str, Any]] = {} # node_id -> state (for loops)
+        self.node_memory: Dict[str, List[Dict[str, str]]] = {} # node_id -> chat_history (stateful memory)
         self.api_key = graph.apiKey # Prefer key sent from client
 
     async def run(self):
@@ -221,35 +222,37 @@ class WorkflowExecutor:
                         result = f"Search Error: {str(search_err)}"
 
             elif node.type == 'neural-llm':
-                # REAL LLM GENERATION
-                prompt_context = ""
-                for key, val in inputs.items():
-                    prompt_context += f"Input from Node {key}:\n{val}\n\n"
+                # REAL LLM GENERATION WITH STATEFUL MEMORY
                 
-                # Get config from node data
+                # 1. Initialize memory if empty
+                if node.id not in self.node_memory:
+                    system_prompt = node.data.node_config.get("systemPrompt", "You are a helpful AI assistant.")
+                    self.node_memory[node.id] = [{"role": "system", "content": system_prompt}]
+                
+                # 2. Construct new User Input from incoming edges
+                current_input = ""
+                for key, val in inputs.items():
+                    # If input comes from a loop or previous iteration, add context marker
+                    current_input += f"Input from Node {key}:\n{val}\n\n"
+                
+                # 3. Add User Input to Memory
+                self.node_memory[node.id].append({"role": "user", "content": current_input})
+                
+                # Get config
                 model_name = node.data.node_config.get("model", "openai/gpt-3.5-turbo")
                 temperature = node.data.node_config.get("temperature", 0.7)
-                system_prompt = node.data.node_config.get("systemPrompt", "You are a helpful AI assistant in a node-based workflow.")
-                
-                user_prompt = prompt_context
-                
-                messages = [
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_prompt}
-                ]
                 
                 try:
-                    logger.info(f"Executing LLM Node {node.id} with Model: {model_name}")
+                    logger.info(f"Executing LLM Node {node.id} with Memory Size: {len(self.node_memory[node.id])}")
                     llm = LLMService(api_key=self.api_key)
                     current_text = ""
                     
-                    logger.info(f"Sending request to OpenRouter...")
+                    # 4. Send FULL HISTORY to LLM
                     async for chunk in llm.stream_completion(
-                        messages=messages, 
+                        messages=self.node_memory[node.id], 
                         model=model_name,
                         temperature=temperature
                     ):
-                        # print(f"Chunk received: {chunk}") # Too verbose for big outputs
                         current_text += chunk
                         await self.websocket.send_json({
                             "type": "token_stream",
@@ -257,12 +260,13 @@ class WorkflowExecutor:
                             "token": chunk
                         })
                     
-                    logger.info(f"LLM Execution Complete. Length: {len(current_text)}")
+                    # 5. Save Assistant Response to Memory
+                    self.node_memory[node.id].append({"role": "assistant", "content": current_text})
+                    
                     result = current_text
                     
-                    # Calculate Usage Stats (Approximate for MVP)
-                    # Standard rule of thumb: 1 token ~= 4 characters
-                    input_tokens = len(json.dumps(messages)) // 4
+                    # Calculate Stats
+                    input_tokens = len(json.dumps(self.node_memory[node.id])) // 4
                     output_tokens = len(result) // 4
                     
                     await self.websocket.send_json({
@@ -275,14 +279,11 @@ class WorkflowExecutor:
                         }
                     })
 
-                except ValueError as e:
-                     logger.error(f"Value Error in LLM: {e}")
-                     error_msg = str(e)
-                     await self.websocket.send_json({"type": "node_error", "node_id": node.id, "error": error_msg})
-                     raise e
                 except Exception as e:
-                     logger.error(f"General Error in LLM: {e}")
-                     await self.websocket.send_json({"type": "node_error", "node_id": node.id, "error": f"LLM Fail: {str(e)}"})
+                     logger.error(f"Error in LLM: {e}")
+                     # Remove the last user message so we can retry cleanly if needed
+                     self.node_memory[node.id].pop() 
+                     await self.websocket.send_json({"type": "node_error", "node_id": node.id, "error": str(e)})
                      raise e
 
             elif node.type == 'neural-condition':
@@ -308,10 +309,20 @@ class WorkflowExecutor:
                 await asyncio.sleep(0.1)
 
             elif node.type == 'neural-loop':
-                # LOOP LOGIC
+                # SMART LOOP LOGIC
                 max_iterations = node.data.node_config.get("max_iterations", 3)
+                target_value = node.data.node_config.get("targetValue", "") # For termination condition
                 
-                # Initialize state if not exists
+                # Check inputs for termination signal
+                # If ANY input contains the target_value (e.g. "APPROVED"), we break the loop early.
+                should_terminate = False
+                input_text = "\n".join([str(val) for val in inputs.values()])
+                
+                if target_value and target_value.lower() in input_text.lower():
+                    should_terminate = True
+                    logger.info(f"Loop Node {node.id}: Termination condition '{target_value}' met.")
+
+                # Initialize state
                 if node.id not in self.node_states:
                     self.node_states[node.id] = {"iteration": 0}
                 
@@ -319,46 +330,31 @@ class WorkflowExecutor:
                 state["iteration"] += 1
                 current_iter = state["iteration"]
                 
-                logger.info(f"Loop Node {node.id}: Iteration {current_iter}/{max_iterations}")
-                
-                # Send status update to frontend
+                # Send status
                 await self.websocket.send_json({
-                    "type": "node_usage", # Reuse usage event to update iteration count UI
+                    "type": "node_usage",
                     "node_id": node.id,
                     "usage": {
                         "current_iteration": current_iter,
                         "max_iterations": max_iterations,
-                        "input_tokens": 0,
-                        "output_tokens": 0,
-                        "total_tokens": 0
+                        "input_tokens": 0, "output_tokens": 0, "total_tokens": 0
                     }
                 })
 
-                if current_iter <= max_iterations:
+                if not should_terminate and current_iter <= max_iterations:
                     # CONTINUE LOOP
                     result = {
                         "signal": "loop",
                         "iteration": current_iter,
-                        "data": str(inputs) # Pass inputs through
+                        "data": str(inputs)
                     }
-                    
-                    # IMPORTANT: We need to reset downstream nodes in the loop so they can run again!
-                    # Ideally we should traverse the 'loop' edge and clear execution_results for those nodes.
-                    # For this MVP, we will allow re-execution by NOT adding this Loop node to 'executed_nodes' list 
-                    # in a way that blocks it, OR by explicitly managing the queue.
-                    # Actually, the queue management in 'run' loop handles re-adding neighbors.
-                    # But we need to clear 'self.execution_results' for the target node of the loop 
-                    # so it thinks it's fresh? No, DAG logic might just overwrite.
-                    # Let's trust the overwriting behavior for now.
-                    
                 else:
-                    # FINISH LOOP
+                    # FINISH LOOP (Either max iterations reached OR termination condition met)
                     result = {
                         "signal": "done",
                         "data": str(inputs)
                     }
-                    # Reset state for next full run (optional, or keep it for history)
-                    # self.node_states[node.id] = {"iteration": 0} 
+                    # Reset for next run? No, keep history for now.
 
                 await asyncio.sleep(0.2)
 
