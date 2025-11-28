@@ -49,7 +49,7 @@ The Python-based backend maintains execution state, chat history, and context fo
 *   **Memory:** Agents remember their role and past interactions within a session.
 
 ### Multi-Model Integration
-Seamlessly mix and match models within the same workflow via OpenRouter. Use **GPT-4** for complex reasoning, **Claude 3.5 Sonnet** for creative writing, and **Llama 3** for high-speed tasks.
+Seamlessly mix and match models within the same workflow via OpenRouter. Use **Advanced Reasoning Models** for complex logic, **Creative Models** for content generation, and **Fast/Lightweight Models** for high-speed tasks.
 
 ---
 
