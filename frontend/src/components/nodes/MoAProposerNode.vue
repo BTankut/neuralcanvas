@@ -132,7 +132,7 @@ const result = computed(() => status.value.result) // MoA Proposer results usual
                     min="0"
                     max="2"
                     step="0.1"
-                    class="w-full accent-neon-purple"
+                    class="w-full accent-neon-purple nodrag cursor-pointer"
                 />
                 <span class="text-[9px] text-slate-500">{{ temperature }}</span>
             </div>

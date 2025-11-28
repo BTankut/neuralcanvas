@@ -62,7 +62,7 @@ const selectedName = computed(() => {
 </script>
 
 <template>
-    <div class="relative w-full font-mono text-xs">
+    <div class="relative w-full font-mono text-xs nodrag">
         <!-- Trigger Button -->
         <div 
             @click="toggle"

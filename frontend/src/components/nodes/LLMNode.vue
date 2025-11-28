@@ -126,7 +126,7 @@ const selectedModelName = computed(() => {
                         type="range" 
                         v-model="temp" 
                         min="0" max="1" step="0.1"
-                        class="w-full h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-neon-purple"
+                        class="w-full h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-neon-purple nodrag"
                     />
                 </div>
             </div>

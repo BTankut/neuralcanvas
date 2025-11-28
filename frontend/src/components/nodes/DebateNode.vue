@@ -115,7 +115,7 @@ const selectedModelName = computed(() => {
                     type="number"
                     min="2"
                     max="5"
-                    class="w-full bg-black/50 border border-slate-700 rounded text-xs text-slate-200 p-2 focus:border-neon-red outline-none"
+                    class="w-full bg-black/50 border border-slate-700 rounded text-xs text-slate-200 p-2 focus:border-neon-red outline-none nodrag"
                 />
                 <span class="text-[9px] text-slate-500">Pro, Con, Neutral...</span>
             </div>
@@ -127,7 +127,7 @@ const selectedModelName = computed(() => {
                     type="number"
                     min="1"
                     max="10"
-                    class="w-full bg-black/50 border border-slate-700 rounded text-xs text-slate-200 p-2 focus:border-neon-red outline-none"
+                    class="w-full bg-black/50 border border-slate-700 rounded text-xs text-slate-200 p-2 focus:border-neon-red outline-none nodrag"
                 />
                 <span class="text-[9px] text-slate-500">More rounds = deeper analysis</span>
             </div>
@@ -140,7 +140,7 @@ const selectedModelName = computed(() => {
                     min="0"
                     max="2"
                     step="0.1"
-                    class="w-full accent-neon-red"
+                    class="w-full accent-neon-red nodrag cursor-pointer"
                 />
                 <span class="text-[9px] text-slate-500">{{ temperature }} (higher = more creative)</span>
             </div>

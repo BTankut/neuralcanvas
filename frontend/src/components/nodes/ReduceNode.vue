@@ -135,7 +135,7 @@ const selectedModelName = computed(() => {
                     min="0"
                     max="2"
                     step="0.1"
-                    class="w-full accent-cyan-500"
+                    class="w-full accent-cyan-500 nodrag cursor-pointer"
                 />
                 <span class="text-[9px] text-slate-500">{{ temperature }}</span>
             </div>
@@ -144,7 +144,7 @@ const selectedModelName = computed(() => {
                 <label class="text-[10px] text-slate-400 mb-1 block uppercase">Prompt</label>
                 <textarea
                     v-model="prompt"
-                    class="w-full bg-black/50 border border-slate-700 rounded text-xs text-slate-200 p-2 focus:border-cyan-500 outline-none resize-none h-16 font-mono"
+                    class="w-full bg-black/50 border border-slate-700 rounded text-xs text-slate-200 p-2 focus:border-cyan-500 outline-none resize-none h-16 font-mono nodrag"
                     placeholder="Enter reduction prompt..."
                 ></textarea>
             </div>

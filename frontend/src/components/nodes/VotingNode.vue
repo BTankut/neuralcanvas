@@ -123,7 +123,7 @@ const selectedModelName = computed(() => {
                     min="0"
                     max="1"
                     step="0.1"
-                    class="w-full accent-neon-orange"
+                    class="w-full accent-neon-orange nodrag cursor-pointer"
                 />
                 <span class="text-[9px] text-slate-500">{{ temperature }}</span>
             </div>
