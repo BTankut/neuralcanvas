@@ -209,18 +209,18 @@ onConnect((params) => addEdges(params))
     <div class="absolute top-4 right-4 z-50 flex gap-2 items-center">
         
         <!-- Template Info (Compact) -->
-        <div v-if="store.currentTemplate" class="flex items-center gap-1 bg-slate-900/80 border border-slate-700 rounded-full px-3 backdrop-blur-md mr-1 group relative h-10">
-            <PhProjectorScreen weight="bold" class="text-neon-yellow text-lg mr-1" />
-            <span class="text-xs font-bold text-neon-yellow tracking-wide truncate max-w-[150px] sm:max-w-[250px]">{{ store.currentTemplate.name }}</span>
+        <div v-if="store.currentTemplate" class="flex items-center gap-2 px-3 py-2 rounded-full border border-neon-yellow/50 bg-neon-yellow/10 text-neon-yellow text-xs font-mono backdrop-blur-md mr-1 group relative h-10">
+            <PhProjectorScreen weight="bold" class="text-lg" />
+            <span class="font-bold truncate max-w-[150px] sm:max-w-[250px]">{{ store.currentTemplate.name }}</span>
             
             <!-- Tooltip -->
-            <div class="absolute top-full right-0 mt-2 w-64 p-3 bg-slate-800 border border-slate-600 rounded-lg text-xs text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-xl leading-relaxed">
+            <div class="absolute top-full right-0 mt-2 w-64 p-3 bg-slate-900 border border-slate-600 rounded-lg text-xs text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-xl leading-relaxed font-sans">
                 {{ store.currentTemplate.description }}
             </div>
 
-            <div class="h-4 w-px bg-slate-700 mx-1"></div>
+            <div class="h-4 w-px bg-neon-yellow/30 mx-1"></div>
 
-            <button @click="reloadTemplate" class="p-1 hover:bg-slate-700 rounded-full text-slate-400 hover:text-white transition-colors" title="Reset Template">
+            <button @click="reloadTemplate" class="p-0.5 hover:bg-neon-yellow/20 rounded-full text-neon-yellow/70 hover:text-neon-yellow transition-colors" title="Reset Template">
                 <PhArrowCounterClockwise weight="bold" class="text-lg" />
             </button>
         </div>
