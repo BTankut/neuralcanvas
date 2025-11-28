@@ -135,7 +135,7 @@ const builtInTemplates = [
                 { id: "1", type: "neural-input", position: { x: 50, y: 200 }, data: { label: "Coding Task", inputValue: "Write a Python function to check if a number is prime. Include error handling." } },
                 { id: "2", type: "neural-loop", position: { x: 400, y: 200 }, data: { label: "Quality Gate", node_config: { max_iterations: 5, targetValue: "APPROVED" } } },
                 { id: "3", type: "neural-llm", position: { x: 800, y: 50 }, data: { label: "Junior Developer", node_config: { model: "openai/gpt-3.5-turbo", temperature: 0.4, systemPrompt: "You are a Junior Python Developer. Write code based on the instructions. If you receive feedback, FIX the code based on that feedback." } } },
-                { id: "4", type: "neural-llm", position: { x: 1200, y: 200 }, data: { label: "Senior Reviewer", node_config: { model: "openai/gpt-4-turbo", temperature: 0.2, systemPrompt: "You are a Senior Tech Lead. Review the code. \n1. If it is perfect and robust, output ONLY the word: APPROVED.\n2. If there are bugs or missing requirements, explain what needs to be fixed concisely." } } },
+                { id: "4", type: "neural-llm", position: { x: 1200, y: 200 }, data: { label: "Senior Reviewer", node_config: { model: "openai/gpt-4-turbo", temperature: 0.2, systemPrompt: "You are a Senior Tech Lead. Review the code. \n1. If it is perfect and robust, output the word APPROVED, followed by the full final code block.\n2. If there are bugs or missing requirements, explain what needs to be fixed concisely." } } },
                 { id: "5", type: "neural-output", position: { x: 1600, y: 200 }, data: { label: "Final Code" } }
             ],
             edges: [
